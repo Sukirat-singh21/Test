@@ -89,7 +89,7 @@ const els = {
   achMadeBy: $('achMadeBy'),
   achJee: $('achJee'),
   achEnayat: $('achEnayat'),
-  achAchievementsList: $('achievementsList'),
+  achievementsList: $('achievementsList'),
   achTotalCount: $('achTotalCount'),
   achUnlockedCount: $('achUnlockedCount'),
   achEnayatFill: $('achEnayatFill'),
@@ -1984,7 +1984,7 @@ function updateAchievements() {
 
 function renderAchievements() {
   const metrics = getAchievementMetrics();
-  const list = els.achievementsList;
+  const list = els.achievementsList || els.achAchievementsList;
   const unlockedCount = ACHIEVEMENT_DEFS.reduce((count, def) => count + (state.achievements?.[def.id] ? 1 : 0), 0);
 
   if (els.achUnlockedCount) {

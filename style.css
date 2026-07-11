@@ -2898,6 +2898,7 @@ body.theme-ember .topbar::before {
 }
 
 #achievementsPage .ach-item {
+  min-height: 108px;
   transition:
     transform .18s ease,
     box-shadow .18s ease,
