@@ -126,6 +126,7 @@ const defaultState = {
   theme: 'nebula'
 };
 
+let cloudLastAppliedAt = 0;
 let state = loadState();
 let interval = null;
 let wakeLock = null;
@@ -142,7 +143,6 @@ let cloudSyncTimer = null;
 let cloudRetryTimer = null;
 let cloudSyncInFlight = false;
 let cloudSyncRequested = false;
-let cloudLastAppliedAt = 0;
 let cloudGeneration = { stateGeneration: 0, leaderboardGeneration: 0, updatedAt: 0, exists: false };
 let cloudQueue = null;
 let cloudClientId = null;
@@ -163,7 +163,8 @@ function loadState() {
     const parsed = JSON.parse(raw);
     cloudLastAppliedAt = Number(parsed.updatedAt || 0) || 0;
     return normalizeState({ ...cloneDefaultState(), ...parsed });
-  } catch {
+  } catch (error) {
+    console.warn('[Pomodoro] loadState failed, falling back to defaults:', error);
     return cloneDefaultState();
   }
 }
