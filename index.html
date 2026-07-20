@@ -17,13 +17,11 @@
 
     <!-- ── Top bar ──────────────────────────────────────── -->
     <header class="topbar">
-      <button class="icon-btn" id="menuBtn" aria-label="Open menu">☰</button>
       <div class="brand">
         <div class="brand-title" id="appTitle">JEE Pomodoro Flow</div>
         <div class="brand-subtitle">Focus timer · Subject tracking · Leaderboard</div>
       </div>
       <div class="profile-pill" id="profileName">Guest</div>
-      <button class="ghost-btn" id="aboutBtn">Menu</button>
     </header>
 
     <!-- ── Pages ────────────────────────────────────────── -->
@@ -121,7 +119,7 @@
           <div>
             <div class="eyebrow">📊 Analytics</div>
             <h2>Study patterns</h2>
-            <p>Weekly and monthly views generated dynamically from your saved sessions. Tap any bar to inspect it.</p>
+            <p>See weekly or monthly study patterns at a glance. Select a day, then open its session log only when you need it.</p>
           </div>
           <div class="analytics-stats" style="grid-template-columns:repeat(2,minmax(0,1fr))">
             <div class="mini-stat"><span>⏱ Total hours</span><strong id="totalHours">0h</strong></div>
@@ -147,8 +145,8 @@
           <div class="chip-row" id="periodChips"></div>
           <div class="graph-wrap" id="graphArea"></div>
           <div class="analytics-detail" id="analyticsDetail">
-            <strong>Tap a bar to inspect it</strong>
-            <span class="muted">Hours, questions, and subject split will appear here.</span>
+            <strong>Select a day to inspect it</strong>
+            <span class="muted">Time, questions, subject split, and the session log stay neatly in one place.</span>
           </div>
           <div class="legend">
             <span><i class="dot phy"></i>⚡ Physics</span>
@@ -162,12 +160,38 @@
       <!-- ╔══════════════════════════════════════════════╗ -->
       <!-- ║  SETTINGS PAGE — Amber identity              ║ -->
       <!-- ╚══════════════════════════════════════════════╝ -->
-      <section class="page" id="settingsPage">
+      <section class="page" id="otherPage">
+
+        <div class="other-tabs" role="tablist" aria-label="Other sections">
+          <button class="other-tab" type="button" role="tab" aria-selected="false" aria-controls="profilePanel" data-other-view="profile">Profile</button>
+          <button class="other-tab active" type="button" role="tab" aria-selected="true" aria-controls="settingsPage" data-other-view="settings">Settings</button>
+          <button class="other-tab" type="button" role="tab" aria-selected="false" aria-controls="achievementsPage" data-other-view="achievements">Badges</button>
+          <button class="other-tab" type="button" role="tab" aria-selected="false" aria-controls="dataPanel" data-other-view="data">Data</button>
+        </div>
+
+        <section class="card other-panel other-profile-card hidden" id="profilePanel" aria-labelledby="profileSectionTitle">
+          <div class="section-heading">
+            <div>
+              <span class="other-kicker">YOUR PROFILE</span>
+              <h2 id="profileSectionTitle">Study identity</h2>
+            </div>
+            <button class="soft other-profile-action" id="changeProfileBtn" type="button">Change name</button>
+          </div>
+          <div class="other-profile-summary">
+            <span class="other-profile-avatar" aria-hidden="true">👤</span>
+            <div>
+              <strong id="profilePageName">Guest</strong>
+              <span>Shown on the shared leaderboard and synced across your devices.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="other-panel active" id="settingsPage" aria-labelledby="settingsSectionTitle">
 
         <div class="card settings-header page-header-card">
           <div>
             <div class="eyebrow">⚙️ Settings</div>
-            <h2>Timer controls</h2>
+            <h2 id="settingsSectionTitle">Timer controls</h2>
             <p>Set your focus length, tune breaks, and switch on continuous no-break mode for long grind sessions. Changes save automatically.</p>
           </div>
           <div class="settings-summary">
@@ -184,27 +208,27 @@
 
           <div class="settings-grid">
             <label class="setting-field">
-              <span>🎯 Pomodoro length</span>
-              <input id="settingsFocusInput" type="range" min="1" max="60" step="1" value="25" />
-              <small>1–60 minutes per focus round.</small>
+              <span class="setting-field-head"><span>🎯 Pomodoro length</span><output id="settingsFocusValue" for="settingsFocusInput">25 min</output></span>
+              <input id="settingsFocusInput" type="range" min="1" max="60" step="1" value="25" aria-describedby="settingsFocusHint" />
+              <small id="settingsFocusHint">1–60 minutes per focus round.</small>
             </label>
 
             <label class="setting-field">
-              <span>☕ Short break</span>
-              <input id="settingsShortBreakInput" type="range" min="1" max="30" step="1" value="5" />
-              <small>Used in normal Pomodoro mode.</small>
+              <span class="setting-field-head"><span>☕ Short break</span><output id="settingsShortBreakValue" for="settingsShortBreakInput">5 min</output></span>
+              <input id="settingsShortBreakInput" type="range" min="1" max="30" step="1" value="5" aria-describedby="settingsShortBreakHint" />
+              <small id="settingsShortBreakHint">Used in normal Pomodoro mode.</small>
             </label>
 
             <label class="setting-field">
-              <span>🛋 Long break</span>
-              <input id="settingsLongBreakInput" type="range" min="1" max="45" step="1" value="15" />
-              <small>After completing a full round set.</small>
+              <span class="setting-field-head"><span>🛋 Long break</span><output id="settingsLongBreakValue" for="settingsLongBreakInput">15 min</output></span>
+              <input id="settingsLongBreakInput" type="range" min="1" max="45" step="1" value="15" aria-describedby="settingsLongBreakHint" />
+              <small id="settingsLongBreakHint">After completing a full round set.</small>
             </label>
 
             <label class="setting-field">
-              <span>🔁 Rounds before long break</span>
-              <input id="settingsRoundsInput" type="range" min="2" max="8" step="1" value="4" />
-              <small>Classic Pomodoro = 4 rounds.</small>
+              <span class="setting-field-head"><span>🔁 Rounds before long break</span><output id="settingsRoundsValue" for="settingsRoundsInput">4 rounds</output></span>
+              <input id="settingsRoundsInput" type="range" min="2" max="8" step="1" value="4" aria-describedby="settingsRoundsHint" />
+              <small id="settingsRoundsHint">Classic Pomodoro = 4 rounds.</small>
             </label>
           </div>
 
@@ -284,24 +308,24 @@
       <!-- ╔══════════════════════════════════════════════╗ -->
       <!-- ║  ACHIEVEMENTS PAGE — Gold identity           ║ -->
       <!-- ╚══════════════════════════════════════════════╝ -->
-      <section class="page" id="achievementsPage">
+        <section class="other-panel hidden" id="achievementsPage" aria-labelledby="achievementsSectionTitle">
 
         <div class="card achievements-header page-header-card">
           <div>
             <div class="eyebrow">🏆 Achievements</div>
-            <h2>Your badges</h2>
-            <p>Open this section to scan your stats, reveal badges, and watch the unlock animation fire when you hit a milestone.</p>
+            <h2 id="achievementsSectionTitle">Your badges</h2>
+            <p>Track permanent milestones and today’s challenges. New unlocks pop up as soon as you log the session that earns them.</p>
           </div>
           <div class="analytics-stats achievements-summary" style="grid-template-columns:repeat(2,minmax(0,1fr))">
-            <div class="mini-stat"><span>Unlocked today</span><strong id="achUnlockedCount">0</strong></div>
-            <div class="mini-stat"><span>Total available</span><strong id="achTotalCount">7</strong></div>
+            <div class="mini-stat"><span>Unlocked</span><strong id="achUnlockedCount">0</strong></div>
+            <div class="mini-stat"><span>Total available</span><strong id="achTotalCount">13</strong></div>
           </div>
         </div>
 
         <div class="card achievements-grid-card">
           <div class="section-heading">
-            <h2>🌟 Daily challenges</h2>
-            <span>Resets at midnight</span>
+            <h2>🌟 Milestones &amp; daily challenge</h2>
+            <span>Daily challenge resets at midnight</span>
           </div>
 
           <div class="ach-list" id="achievementsList"></div>
@@ -313,9 +337,9 @@
             <span>Simple rules</span>
           </div>
           <div class="mini-lines">
-            <div class="mini-line"><span>⏰ Daily reset</span><strong>Progress resets every midnight</strong></div>
+            <div class="mini-line"><span>⏰ Daily challenge</span><strong>Only today’s challenge resets at midnight</strong></div>
             <div class="mini-line"><span>📊 Progress bar</span><strong>Track completion below each badge</strong></div>
-            <div class="mini-line"><span>☁️ Cloud sync</span><strong>Achievements saved with session data</strong></div>
+            <div class="mini-line"><span>🏆 Milestones</span><strong>Permanent achievements stay unlocked</strong></div>
           </div>
         </div>
 
@@ -325,6 +349,35 @@
           <div id="achJee"></div>
         </div>
 
+        </section>
+
+        <section class="card other-panel other-data-card hidden" id="dataPanel" aria-labelledby="dataSectionTitle">
+          <div class="section-heading">
+            <div>
+              <span class="other-kicker">DATA MANAGEMENT</span>
+              <h2 id="dataSectionTitle">Your study data</h2>
+            </div>
+            <span>Stored privately on this device</span>
+          </div>
+          <p>Export a safety copy, restore a previous backup, or start fresh whenever you need to.</p>
+          <div class="other-data-actions">
+            <button class="soft" id="backupBtn" type="button">Export backup</button>
+            <button class="soft" id="importBtn" type="button">Import backup</button>
+            <button class="danger" id="clearDataBtn" type="button">Clear local data</button>
+          </div>
+          <input type="file" id="importFileInput" accept="application/json,.json" hidden />
+
+          <div class="about-box" aria-labelledby="aboutSectionTitle" style="margin-top:4px">
+            <div class="section-heading">
+              <div>
+                <span class="other-kicker">ABOUT</span>
+                <h2 id="aboutSectionTitle">JEE Pomodoro Flow</h2>
+              </div>
+            </div>
+            <p>Made with love by <strong>Sukirat</strong>. Tap the app title 7 times for a small surprise.</p>
+          </div>
+        </section>
+
       </section>
 
       <!-- ╔══════════════════════════════════════════════╗ -->
@@ -332,25 +385,31 @@
       <!-- ╚══════════════════════════════════════════════╝ -->
       <section class="page" id="leaderboardPage">
 
-        <div class="card leaderboard-header page-header-card">
-          <div>
-            <div class="eyebrow">🏅 Leaderboard</div>
-            <h2>Shared progress board</h2>
-            <p>Ranked by total study minutes, then questions solved. Medals highlight the top 3 grinders.</p>
+        <div class="card leaderboard-scope-card">
+          <div class="leaderboard-meta-row" aria-label="Leaderboard status">
+            <span><strong id="leaderboardCount">0</strong> players</span>
+            <span class="live-indicator"><span class="live-dot"></span>Live</span>
+            <span>Top rank: Gold</span>
+            <span class="leaderboard-sync">Synced <strong id="leaderboardUpdatedAt">—</strong></span>
           </div>
-          <div class="analytics-stats leaderboard-summary" style="grid-template-columns:repeat(2,minmax(0,1fr))">
-            <div class="mini-stat"><span>👥 Players</span><strong id="leaderboardCount">0</strong></div>
-            <div class="mini-stat">
-              <span>Status</span>
-              <strong>
-                <span class="live-indicator">
-                  <span class="live-dot"></span>LIVE
-                </span>
-              </strong>
-            </div>
-            <div class="mini-stat"><span>🥇 Top rank</span><strong>Gold</strong></div>
-            <div class="mini-stat"><span>🕐 Synced</span><strong id="leaderboardUpdatedAt">—</strong></div>
+          <div class="lb-scope-bar" id="leaderboardScopeBar" role="tablist" aria-label="Leaderboard time scope">
+            <button class="lb-scope active" type="button" role="tab" aria-selected="true"
+                    data-lb-scope="daily">
+              <span class="lb-scope-icon">📅</span>
+              <span class="lb-scope-label">Today</span>
+            </button>
+            <button class="lb-scope" type="button" role="tab" aria-selected="false"
+                    data-lb-scope="weekly">
+              <span class="lb-scope-icon">🗓️</span>
+              <span class="lb-scope-label">This Week</span>
+            </button>
+            <button class="lb-scope" type="button" role="tab" aria-selected="false"
+                    data-lb-scope="alltime">
+              <span class="lb-scope-icon">🏆</span>
+              <span class="lb-scope-label">All-time</span>
+            </button>
           </div>
+          <div class="subline" id="leaderboardSubline">Today · resets at midnight</div>
         </div>
 
         <div class="card leaderboard-podium-card">
@@ -380,51 +439,20 @@
     </main>
   </div>
 
-  <!-- ── Drawer backdrop ────────────────────────────────── -->
-  <div class="drawer-backdrop hidden" id="drawerBackdrop"></div>
-
-  <!-- ── Side drawer ────────────────────────────────────── -->
-  <aside class="drawer hidden" id="drawer" aria-label="Navigation menu">
-    <div class="drawer-head">
-      <div>
-        <div class="drawer-title">Navigation</div>
-        <div class="drawer-sub">Choose a page</div>
-      </div>
-      <button class="icon-btn small" id="closeDrawerBtn" aria-label="Close menu">✕</button>
-    </div>
-
-    <button class="drawer-item active" data-page="timer">
-      <span class="drawer-item-icon">🎯</span>Timer
+  <nav class="tab-pill" id="tabPill" role="tablist" aria-label="Primary navigation">
+    <button class="tab-pill-item active" type="button" role="tab" aria-selected="true" aria-controls="timerPage" data-page="timer">
+      <span aria-hidden="true">🎯</span><span>Timer</span>
     </button>
-    <button class="drawer-item" data-page="analytics">
-      <span class="drawer-item-icon">📊</span>Analytics
+    <button class="tab-pill-item" type="button" role="tab" aria-selected="false" aria-controls="analyticsPage" data-page="analytics">
+      <span aria-hidden="true">📊</span><span>Analytics</span>
     </button>
-    <button class="drawer-item" data-page="settings">
-      <span class="drawer-item-icon">⚙️</span>Settings
+    <button class="tab-pill-item" type="button" role="tab" aria-selected="false" aria-controls="leaderboardPage" data-page="leaderboard">
+      <span aria-hidden="true">🏆</span><span>Leaderboard</span>
     </button>
-    <button class="drawer-item" data-page="leaderboard">
-      <span class="drawer-item-icon">🏅</span>Leaderboard
+    <button class="tab-pill-item" type="button" role="tab" aria-selected="false" aria-controls="otherPage" data-page="other">
+      <span aria-hidden="true">⋯</span><span>More</span>
     </button>
-    <button class="drawer-item" data-page="achievements">
-      <span class="drawer-item-icon">🏆</span>Achievements
-    </button>
-
-    <div class="drawer-separator"></div>
-
-    <button class="drawer-item" id="backupBtn">
-      <span class="drawer-item-icon">💾</span>Export backup
-    </button>
-    <button class="drawer-item" id="clearDataBtn">
-      <span class="drawer-item-icon">🗑</span>Clear local data
-    </button>
-
-    <div class="about-box">
-      <div class="section-heading">
-        <h2>About</h2>
-      </div>
-      <p>Made with ❤️ by <strong>Sukirat</strong>.<br>Tap the title 7× for a small surprise.</p>
-    </div>
-  </aside>
+  </nav>
 
   <!-- ── Session log modal ──────────────────────────────── -->
   <div class="modal hidden" id="sessionModal"
@@ -480,7 +508,7 @@
       <div class="modal-head">
         <div>
           <h3 id="analyticsSessionTitle">📅 Session details</h3>
-          <p id="analyticsSessionDescription">Saved study time, question count, and subject breakdown for this day.</p>
+       <p id="analyticsSessionDescription">Review every session, its note, and its question count for this day.</p>
         </div>
         <button class="icon-btn small" id="closeAnalyticsSessionBtn" aria-label="Close session details">✕</button>
       </div>
@@ -494,6 +522,8 @@
 
       <div class="mini-lines analytics-subject-questions" id="analyticsSubjectQuestions"></div>
 
+      <div class="analytics-session-list" id="analyticsSessionList" aria-live="polite"></div>
+
       <div class="modal-actions">
         <button class="soft danger" id="deleteAnalyticsSessionBtn">🗑 Delete day</button>
         <button class="primary"     id="closeAnalyticsSessionFooterBtn">Close</button>
@@ -503,6 +533,28 @@
 
   <!-- ── Toast ──────────────────────────────────────────── -->
   <div class="toast hidden" id="toast"></div>
+
+  <!-- ── Achievement unlock celebration overlay ─────────── -->
+  <div class="ach-popup-overlay hidden" id="achPopupOverlay"
+       role="dialog" aria-modal="true" aria-hidden="true"
+       aria-labelledby="achPopupName">
+    <div class="ach-popup" role="document">
+      <div class="ach-popup-glow" aria-hidden="true"></div>
+      <div class="ach-popup-eyebrow">ACHIEVEMENT UNLOCKED</div>
+      <div class="ach-popup-icon" id="achPopupIcon" aria-hidden="true">🏆</div>
+      <div class="ach-popup-rarity" id="achPopupRarity">COMMON</div>
+      <div class="ach-popup-name" id="achPopupName">Achievement</div>
+      <div class="ach-popup-desc" id="achPopupDesc"></div>
+      <div class="ach-popup-more hidden" id="achPopupMore"></div>
+      <div class="ach-popup-hint">tap to close</div>
+    </div>
+  </div>
+
+  <!-- ── Update-available banner ─────────────────────────── -->
+  <div class="update-banner hidden" id="updateBanner" role="status" aria-live="polite">
+    <span>🔄 A new version is ready.</span>
+    <button class="primary" id="updateReloadBtn" type="button">Refresh</button>
+  </div>
 
   <!-- ── Profile modal ─────────────────────────────────── -->
   <div class="modal hidden" id="profileModal"
@@ -528,10 +580,67 @@
   <!-- ── Scripts ────────────────────────────────────────── -->
   <script src="app.js"></script>
   <script>
+    // ── PWA update flow ──────────────────────────────────────
+    // The service worker installs new versions in the background but
+    // deliberately waits (no self.skipWaiting()) so it never yanks code
+    // out from under an open session. That means SOMETHING on this page
+    // has to notice the waiting worker, offer the person a refresh, and
+    // then tell it to take over. Previously nothing did that, so updates
+    // could sit installed-but-inactive indefinitely and the app kept
+    // running old cached JS/CSS/HTML until every tab happened to be
+    // closed and reopened — which read as "old files keep loading".
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () =>
-        navigator.serviceWorker.register('service-worker.js').catch(() => {})
-      );
+      let refreshing = false;
+      let waitingWorker = null;
+      const banner = document.getElementById('updateBanner');
+      const reloadBtn = document.getElementById('updateReloadBtn');
+
+      function showUpdateBanner(worker) {
+        waitingWorker = worker;
+        if (banner) banner.classList.remove('hidden');
+      }
+
+      if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+          if (waitingWorker) waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+          if (banner) banner.classList.add('hidden');
+        });
+      }
+
+      // Once the new worker actually takes control, do the one reload
+      // needed to load the fresh index.html/app.js/style.css.
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js').then((registration) => {
+          // A worker may already be sitting in "waiting" from a previous
+          // visit (e.g. this tab was open across a deploy).
+          if (registration.waiting && navigator.serviceWorker.controller) {
+            showUpdateBanner(registration.waiting);
+          }
+
+          registration.addEventListener('updatefound', () => {
+            const installing = registration.installing;
+            if (!installing) return;
+            installing.addEventListener('statechange', () => {
+              // Only prompt for an in-place UPDATE (there's already a
+              // controller). On the very first install for a new visitor
+              // there's nothing to refresh yet — it just activates normally.
+              if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+                showUpdateBanner(installing);
+              }
+            });
+          });
+
+          // Catch deploys that happen while the tab is left open for a
+          // long time, since browsers only check for updates on navigation.
+          setInterval(() => { registration.update().catch(() => {}); }, 60 * 60 * 1000);
+        }).catch(() => {});
+      });
     }
   </script>
 </body>
