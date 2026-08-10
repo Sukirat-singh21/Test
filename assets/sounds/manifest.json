@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "format": {
+    "container": "mp3",
+    "codec": "mp3",
+    "bitrateKbps": 128,
+    "sampleRate": 44100,
+    "channels": 1,
+    "peakTargetDbfs": -3
+  },
+  "assets": [
+    {
+      "path": "assets/sounds/grove/wood-click.mp3",
+      "sourcePage": "https://freesound.org/people/BenjaminNelan/sounds/321083/",
+      "sourceFile": "Wooden Click",
+      "author": "BenjaminNelan",
+      "license": "CC0",
+      "trimStartSeconds": 0,
+      "trimDurationSeconds": 0.12
+    },
+    {
+      "path": "assets/sounds/grove/wood-creak.mp3",
+      "sourcePage": "https://freesound.org/people/Rudmer_Rotteveel/sounds/502504/",
+      "sourceFile": "Wood Creak Single V2",
+      "author": "Rudmer_Rotteveel",
+      "license": "CC0",
+      "trimStartSeconds": 0,
+      "trimDurationSeconds": 0.4
+    },
+    {
+      "path": "assets/sounds/lagoon/water-drop.mp3",
+      "sourcePage": "https://freesound.org/people/paespedro/sounds/174718/",
+      "sourceFile": "Single Water Drop",
+      "author": "paespedro",
+      "license": "CC0",
+      "trimStartSeconds": 0,
+      "trimDurationSeconds": 0.3
+    },
+    {
+      "path": "assets/sounds/hearth/fire-crackle-short.mp3",
+      "sourcePage": "https://freesound.org/people/Sadiquecat/sounds/800660/",
+      "sourceFile": "Inside fireplace (Crackling)",
+      "author": "Sadiquecat",
+      "license": "CC0",
+      "trimStartSeconds": 0.72,
+      "trimDurationSeconds": 0.5
+    },
+    {
+      "path": "assets/sounds/hearth/fire-crackle-loop.mp3",
+      "sourcePage": "https://freesound.org/people/soundofsong/sounds/650574/",
+      "sourceFile": "fire crackling loop.wav",
+      "author": "soundofsong",
+      "license": "CC0",
+      "trimStartSeconds": 0,
+      "trimDurationSeconds": 3.5
+    },
+    {
+      "path": "assets/sounds/mythic/wind-chimes.mp3",
+      "sourcePage": "https://freesound.org/people/InspectorJ/sounds/353194/",
+      "sourceFile": "Wind Chimes, A.wav",
+      "author": "InspectorJ",
+      "license": "CC BY 4.0",
+      "attributionRequired": true,
+      "trimStartSeconds": 0,
+      "trimDurationSeconds": 1.5
+    },
+    {
+      "path": "assets/sounds/shared/kenney-click.mp3",
+      "sourcePage": "https://kenney.nl/assets/ui-audio",
+      "sourceFile": "click1.ogg",
+      "author": "Kenney",
+      "license": "CC0",
+      "trimStartSeconds": 0,
+      "trimDurationSeconds": 0.093832
+    },
+    {
+      "path": "assets/sounds/shared/kenney-toggle.mp3",
+      "sourcePage": "https://kenney.nl/assets/ui-audio",
+      "sourceFile": "switch1.ogg",
+      "author": "Kenney",
+      "license": "CC0",
+      "trimStartSeconds": 0,
+      "trimDurationSeconds": 0.314694
+    }
+  ]
+}
