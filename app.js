@@ -1,26 +1,9 @@
 const $ = (id) => document.getElementById(id);
 const CIRC = 515.22;
-const RING_R = 82; // radius of the progress ring circle
-const RING_CX = 100, RING_CY = 100; // center of the SVG viewBox
-/* Position the comet-head glow at the leading edge of the progress arc */
-function positionComet(pct) {
-  if (!els.cometHead) return;
-  // SVG circle starts at 3 o'clock; rotate(-90deg) on svg shifts start to 12 o'clock
-  // pct=0 → top (270° in math), pct=1 → full circle back to top
-  const angle = (pct * 360 - 90) * (Math.PI / 180);
-  const cx = RING_CX + RING_R * Math.cos(angle);
-  const cy = RING_CY + RING_R * Math.sin(angle);
-  els.cometHead.setAttribute('cx', cx.toFixed(2));
-  els.cometHead.setAttribute('cy', cy.toFixed(2));
-}
 const SUBJECTS = ['Physics', 'Chemistry', 'Maths'];
-const STORAGE_KEY = 'jee_pomodoro_flow_v5';
-const LEGACY_STORAGE_KEYS = ['jee_pomodoro_flow_v4'];
+const STORAGE_KEY = 'jee_pomodoro_flow_v4';
 const PROFILE_KEY = 'jee_pomodoro_flow_v4_profile';
 const DAY_MS = 86400000;
-const startupSplashStartedAt = performance.now();
-const DESKTOP_SPLASH_MIN_MS = 2300;
-const MOBILE_SPLASH_MIN_MS = 760;
 const CLOUD_SYNC_ENABLED = true;
 const CLOUD_QUEUE_KEY = 'jee_pomodoro_flow_v4_cloud_queue';
 const CLOUD_CLIENT_ID_KEY = 'jee_pomodoro_flow_v4_cloud_client_id';
@@ -29,60 +12,28 @@ const CLOUD_SYNC_RETRY_BASE_MS = 2000;
 const CLOUD_SYNC_RETRY_MAX_MS = 60000;
 
 const els = {
-  startupSplash: $('startupSplash'),
-  tabPill: $('tabPill'),
+  menuBtn: $('menuBtn'),
+  aboutBtn: $('aboutBtn'),
   profileModal: $('profileModal'),
   profileInput: $('profileInput'),
   profileSaveBtn: $('profileSaveBtn'),
   profileName: $('profileName'),
-  profilePageName: $('profilePageName'),
-  profilePanel: $('profilePanel'),
-  changeProfileBtn: $('changeProfileBtn'),
   leaderboardList: $('leaderboardList'),
   leaderboardUpdatedAt: $('leaderboardUpdatedAt'),
-  leaderboardCount: $('leaderboardCount'),
-  leaderboardPodium: $('leaderboardPodium'),
-  leaderboardSubline: $('leaderboardSubline'),
-  leaderboardScopeBar: $('leaderboardScopeBar'),
-  leaderboardPage: $('leaderboardPage'),
-  otherPage: $('otherPage'),
-  achievementsPage: $('achievementsPage'),
-  settingsPage: $('settingsPage'),
-  settingsFocusInput: $('settingsFocusInput'),
-  settingsShortBreakInput: $('settingsShortBreakInput'),
-  settingsLongBreakInput: $('settingsLongBreakInput'),
-  settingsRoundsInput: $('settingsRoundsInput'),
-  settingsFocusValue: $('settingsFocusValue'),
-  settingsShortBreakValue: $('settingsShortBreakValue'),
-  settingsLongBreakValue: $('settingsLongBreakValue'),
-  settingsRoundsValue: $('settingsRoundsValue'),
-  settingsNoBreakInput: $('settingsNoBreakInput'),
-  settingsAutoStartInput: $('settingsAutoStartInput'),
-  settingsSoundInput: $('settingsSoundInput'),
-  settingsVolumeInput: $('settingsVolumeInput'),
-  settingsVolumeValue: $('settingsVolumeValue'),
-  soundVolumeField: $('soundVolumeField'),
-  settingsPulseInput: $('settingsPulseInput'),
-  settingsResetBtn: $('settingsResetBtn'),
-  sessionModalDescription: $('sessionModalDescription'),
-  sessionDuration: $('sessionDuration'),
+  drawer: $('drawer'),
+  drawerBackdrop: $('drawerBackdrop'),
+  closeDrawerBtn: $('closeDrawerBtn'),
   backupBtn: $('backupBtn'),
-  importBtn: $('importBtn'),
-  importFileInput: $('importFileInput'),
   clearDataBtn: $('clearDataBtn'),
   timerPage: $('timerPage'),
   analyticsPage: $('analyticsPage'),
   appTitle: $('appTitle'),
-  brandGreeting: $('brandGreeting'),
   heroTitle: $('heroTitle'),
-  focusContext: $('focusContext'),
-  roundTracker: $('roundTracker'),
   statusPill: $('statusPill'),
   sessionMini: $('sessionMini'),
   timer: $('timer'),
   modeLabel: $('modeLabel'),
   progressRing: $('progressRing'),
-  cometHead: $('cometHead'),
   startPauseBtn: $('startPauseBtn'),
   skipBtn: $('skipBtn'),
   resetBtn: $('resetBtn'),
@@ -91,10 +42,6 @@ const els = {
   todayQuestions: $('todayQuestions'),
   todaySessions: $('todaySessions'),
   todayBreakdown: $('todayBreakdown'),
-  dailyHeadline: $('dailyHeadline'),
-  dailySubline: $('dailySubline'),
-  dailyProgressBar: $('dailyProgressBar'),
-  dailyProgressLabel: $('dailyProgressLabel'),
   sessionModal: $('sessionModal'),
   closeModalBtn: $('closeModalBtn'),
   cancelLogBtn: $('cancelLogBtn'),
@@ -108,7 +55,6 @@ const els = {
   analyticsSessionQuestions: $('analyticsSessionQuestions'),
   analyticsSessionCount: $('analyticsSessionCount'),
   analyticsSubjectQuestions: $('analyticsSubjectQuestions'),
-  analyticsSessionList: $('analyticsSessionList'),
   closeAnalyticsSessionBtn: $('closeAnalyticsSessionBtn'),
   closeAnalyticsSessionFooterBtn: $('closeAnalyticsSessionFooterBtn'),
   deleteAnalyticsSessionBtn: $('deleteAnalyticsSessionBtn'),
@@ -119,52 +65,13 @@ const els = {
   currentStreak: $('currentStreak'),
   analyticsTitle: $('analyticsTitle'),
   periodLabel: $('periodLabel'),
-  periodSelector: $('periodSelector'),
   periodChips: $('periodChips'),
-  periodPrevBtn: $('periodPrevBtn'),
-  periodNextBtn: $('periodNextBtn'),
-  periodTodayBtn: $('periodTodayBtn'),
-  analyticsRecentSessionsBtn: $('analyticsRecentSessionsBtn'),
   graphArea: $('graphArea'),
   analyticsDetail: $('analyticsDetail'),
   analyticsSubline: $('analyticsSubline'),
   achMadeBy: $('achMadeBy'),
   achJee: $('achJee'),
   achEnayat: $('achEnayat'),
-  achievementsList: $('achievementsList'),
-  achTotalCount: $('achTotalCount'),
-  achUnlockedCount: $('achUnlockedCount'),
-  achEnayatFill: $('achEnayatFill'),
-  achEnayatLabel: $('achEnayatLabel'),
-  achEnayatBadge: $('achEnayatBadge'),
-  nextBadgeHero: $('nextBadgeHero'),
-  nextBadgeHeroArt: $('nextBadgeHeroArt'),
-  nextBadgeKind: $('nextBadgeKind'),
-  nextBadgeName: $('nextBadgeName'),
-  nextBadgeDescription: $('nextBadgeDescription'),
-  nextBadgeProgressLabel: $('nextBadgeProgressLabel'),
-  nextBadgeProgressHint: $('nextBadgeProgressHint'),
-  nextBadgeProgressFill: $('nextBadgeProgressFill'),
-  nextBadgeRarity: $('nextBadgeRarity'),
-  nextBadgeReward: $('nextBadgeReward'),
-  nextBadgeLine: $('nextBadgeLine'),
-  achPopupOverlay: $('achPopupOverlay'),
-  achPopupIcon: $('achPopupIcon'),
-  achPopupName: $('achPopupName'),
-  achPopupRarity: $('achPopupRarity'),
-  achPopupDesc: $('achPopupDesc'),
-  achPopupMore: $('achPopupMore'),
-  todoPanel: $('todoPanel'),
-  todoForm: $('todoForm'),
-  todoInput: $('todoInput'),
-  todoList: $('todoList'),
-  todoEmpty: $('todoEmpty'),
-  todoCount: $('todoCount'),
-  todoHint: $('todoHint'),
-  todoClearCompleted: $('todoClearCompleted'),
-  todoCollapseBtn: $('todoCollapseBtn'),
-  todoRestoreChip: $('todoRestoreChip'),
-  todoRestoreCount: $('todoRestoreCount'),
 };
 
 const defaultState = {
@@ -174,9 +81,7 @@ const defaultState = {
   roundsBeforeLong: 4,
   autoStart: false,
   sound: true,
-  soundVolume: 0.7,
   pulse: true,
-  noBreakMode: false,
   currentMode: 'focus',
   cycleCount: 1,
   running: false,
@@ -184,101 +89,51 @@ const defaultState = {
   total: 25 * 60,
   timerCheckpoint: null,
   records: [],
-  deletedRecordIds: {},
   page: 'timer',
-  otherView: 'settings',
-  settingsView: 'timer',
-  achievementView: 'daily',
   analyticsView: 'weekly',
   analyticsSelections: { weekly: -1, monthly: -1 },
-  // Which leaderboard scope is active on the Leaderboard page:
-  // 'daily' (today), 'weekly' (Mon–Sun), or 'alltime'. Defaults to 'daily' so
-  // the freshest competition shows first; older saved state without this field
-  // is normalized to 'daily'.
-  leaderboardScope: 'daily',
   titleTapCount: 0,
   lastSubject: 'Physics',
   pendingSession: null,
   streak: 0,
   lastDate: null,
   updatedAt: 0,
-  // Only durable record edits advance this value. UI/settings/timer saves do
-  // not, so they cannot outrank a record deletion during reconciliation.
-  recordsUpdatedAt: 0,
-  // Per-user cloud generation last observed by this local state.
-  cloudStateGeneration: 0,
   aboutPulseShown: false,
   profile: { name: '', createdAt: 0, updatedAt: 0 },
-  todos: [],
-  achievements: {
-    madeBy: true,
-    jee: true,
-    firstSpark: false,
-    momentum: false,
-    triadSync: false,
-    focusForge: false,
-    streakFlame: false,
-    noBreakBeast: false,
-    ironFocus: false,
-    unbrokenWill: false,
-    ascendant: false,
-    sharpshooter: false,
-    quizConqueror: false,
-    jeeSlayer: false,
-    enayat: false
-  },
-  achievementDay: '',
-  achievementDates: {},
-  theme: 'nebula',
-  // Whether the focus queue is minimised on desktop. Persisted so the choice
-  // survives reloads; the toggle is only shown ≥760px (phones never see it).
-  todoCollapsed: false
+  achievements: { madeBy: true, jee: true, enayat: false }
 };
 
-let cloudLastAppliedAt = 0;
 let state = loadState();
 let interval = null;
 let wakeLock = null;
+let audioCtx = null;
 let timerPerfStamp = 0;
 let currentSubject = state.lastSubject || 'Physics';
 let currentAnalyticsDetail = null;
 let currentAnalyticsSession = null;
-let currentAnalyticsRows = [];
-let currentAnalyticsRowsView = '';
 let titleTapTimer = null;
 let savingSession = false;
 let cloudSyncReady = null;
-let soundEngineReady = null;
 let cloudSyncQueued = false;
 let cloudSyncTimer = null;
 let cloudRetryTimer = null;
 let cloudSyncInFlight = false;
 let cloudSyncRequested = false;
-let cloudGeneration = { stateGeneration: 0, leaderboardGeneration: 0, userGeneration: 0, updatedAt: 0, exists: false };
+let cloudLastAppliedAt = 0;
 let cloudQueue = null;
 let cloudClientId = null;
 let leaderboardRows = [];
 let profileModalBusy = false;
 let profileHydrationStarted = false;
-let achievementFlashIds = new Set();
-let todoFilter = 'open';
-let syncTopbarScroll = null;
 
 function loadState() {
   try {
-    let raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      for (const key of LEGACY_STORAGE_KEYS) {
-        raw = localStorage.getItem(key);
-        if (raw) break;
-      }
-    }
+    const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return cloneDefaultState();
     const parsed = JSON.parse(raw);
     cloudLastAppliedAt = Number(parsed.updatedAt || 0) || 0;
     return normalizeState({ ...cloneDefaultState(), ...parsed });
-  } catch (error) {
-    console.warn('[Pomodoro] loadState failed, falling back to defaults:', error);
+  } catch {
     return cloneDefaultState();
   }
 }
@@ -294,9 +149,12 @@ function loadProfile() {
 }
 function saveState(options = {}) {
   try {
-    state.updatedAt = Date.now();
+    const touchUpdatedAt = options.touchUpdatedAt !== false;
+    if (touchUpdatedAt) {
+      state.updatedAt = Date.now();
+    }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    if (!options.skipCloud) {
+    if (!options.skipCloudSync) {
       queueCloudSync(options);
     }
     return true;
@@ -315,7 +173,7 @@ function normalizeProfile(profile) {
     updatedAt: Number(profile.updatedAt || 0) || 0
   };
 }
-function saveProfile(profile) {
+function saveProfile(profile, options = {}) {
   try {
     state.profile = normalizeProfile(profile);
     if (!state.profile.createdAt) state.profile.createdAt = Date.now();
@@ -323,7 +181,9 @@ function saveProfile(profile) {
     localStorage.setItem(PROFILE_KEY, JSON.stringify(state.profile));
     state.updatedAt = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    queueCloudSync({ reason: 'profile-change', immediate: true });
+    if (!options.skipCloudSync) {
+      queueCloudSync({ reason: 'profile-change', immediate: true });
+    }
     return true;
   } catch (error) {
     logCloud('error', 'Profile save failed.', error);
@@ -339,24 +199,13 @@ function cloneDefaultState() {
 function getCloudSafeState() {
   const snapshot = cloneDefaultState();
   Object.assign(snapshot, state);
-  // Strip live-timer fields — these are device-local and ephemeral.
-  // Pushing them to Firestore caused cloud pulls on reload to overwrite
-  // the locally-restored checkpoint with a stale mid-tick snapshot,
-  // making the countdown visibly jump or appear to reset.
-  snapshot.running = false;
-  snapshot.timerCheckpoint = null;
-  snapshot.pendingSession = null;
-  snapshot.remaining = secondsForMode(snapshot.currentMode);
-  snapshot.total = secondsForMode(snapshot.currentMode);
+  snapshot.timerCheckpoint = state.timerCheckpoint ? { ...state.timerCheckpoint } : null;
+  snapshot.pendingSession = state.pendingSession ? { ...state.pendingSession } : null;
   snapshot.records = getRecords().map(record => ({ ...record }));
-  snapshot.deletedRecordIds = { ...normalizeDeletedRecordIds(state.deletedRecordIds) };
-  snapshot.recordsUpdatedAt = Number(state.recordsUpdatedAt || 0) || 0;
-  snapshot.cloudStateGeneration = Math.max(0, Number(state.cloudStateGeneration || 0) || 0);
   snapshot.analyticsSelections = { ...(state.analyticsSelections || { weekly: -1, monthly: -1 }) };
   snapshot.achievements = { ...(state.achievements || cloneDefaultState().achievements) };
-  snapshot.achievementDates = { ...(state.achievementDates || cloneDefaultState().achievementDates) };
   snapshot.updatedAt = state.updatedAt || Date.now();
-  snapshot.syncVersion = 2;
+  snapshot.syncVersion = 1;
   return snapshot;
 }
 function logCloud(level, message, details) {
@@ -386,8 +235,7 @@ function normalizeCloudQueue(queue) {
     attempts: Math.max(0, Number.parseInt(queue.attempts, 10) || 0),
     nextAttemptAt: Math.max(0, Number(queue.nextAttemptAt || 0) || 0),
     lastError: String(queue.lastError || ''),
-    reason: String(queue.reason || 'state-change'),
-    generation: normalizeCloudGeneration(queue.generation || {})
+    reason: String(queue.reason || 'state-change')
   };
 }
 function loadCloudQueue() {
@@ -443,8 +291,7 @@ function queueCloudSync(options = {}) {
     attempts: cloudQueue ? cloudQueue.attempts : 0,
     nextAttemptAt: 0,
     lastError: '',
-    reason: options.reason || 'state-change',
-    generation: normalizeCloudGeneration(cloudGeneration)
+    reason: options.reason || 'state-change'
   };
   persistCloudQueue();
   clearTimeout(cloudSyncTimer);
@@ -467,50 +314,6 @@ async function ensureCloudSync() {
   }
   return cloudSyncReady;
 }
-
-async function ensureSoundEngine() {
-  if (!soundEngineReady) {
-    soundEngineReady = import('./sound.js').catch((error) => {
-      console.warn('[Pomodoro] Failed to load sound engine.', error);
-      soundEngineReady = null;
-      return null;
-    });
-  }
-  return soundEngineReady;
-}
-
-function primeSoundEngine() {
-  void ensureSoundEngine().then(mod => mod?.primeAudioEngine());
-}
-
-function normalizeCloudGeneration(generation) {
-  const fallback = { stateGeneration: 0, leaderboardGeneration: 0, userGeneration: 0, updatedAt: 0, exists: false, lastResetAt: 0, lastResetBy: '' };
-  if (!generation || typeof generation !== 'object') return fallback;
-  return {
-    stateGeneration: Math.max(0, Number(generation.stateGeneration || 0) || 0),
-    leaderboardGeneration: Math.max(0, Number(generation.leaderboardGeneration || 0) || 0),
-    userGeneration: Math.max(0, Number(generation.userGeneration || 0) || 0),
-    updatedAt: Math.max(0, Number(generation.updatedAt || generation.lastResetAt || 0) || 0),
-    exists: Boolean(generation.exists || generation.stateGeneration || generation.leaderboardGeneration || generation.userGeneration || generation.updatedAt),
-    lastResetAt: Math.max(0, Number(generation.lastResetAt || 0) || 0),
-    lastResetBy: String(generation.lastResetBy || '').trim().slice(0, 80)
-  };
-}
-
-async function refreshCloudGeneration(options = {}) {
-  const mod = await ensureCloudSync();
-  if (!mod || typeof mod.refreshCloudGeneration !== 'function') return cloudGeneration;
-  try {
-    const identityName = typeof options === 'string' ? options : (options.identityName || '');
-    const next = normalizeCloudGeneration(await mod.refreshCloudGeneration(identityName));
-    cloudGeneration = next;
-    return cloudGeneration;
-  } catch (error) {
-    logCloud('warn', 'Could not refresh cloud generation.', error);
-    return cloudGeneration;
-  }
-}
-
 // Given a name, checks the cloud for any existing progress under that name
 // (and under this device's legacy anonymous id) and merges it into local
 // state. This must run BEFORE any push to the cloud whenever a name is
@@ -522,65 +325,30 @@ async function claimCloudIdentity(name) {
   if (!mod || typeof mod.pullCloudState !== 'function') return { merged: false };
 
   const sources = [];
-  let namedUserGeneration = 0;
-  let namedStateFound = false;
   try {
     const byName = await mod.pullCloudState(name);
-    namedUserGeneration = Number(byName?.userGeneration || 0) || 0;
-    namedStateFound = Boolean(byName && byName.state);
-    if (namedStateFound) sources.push(byName.state);
-    if (byName && byName.userGeneration !== undefined) {
-      cloudGeneration = {
-        ...cloudGeneration,
-        userGeneration: Math.max(Number(cloudGeneration.userGeneration || 0) || 0, Number(byName.userGeneration) || 0)
-      };
-    }
-    if (namedUserGeneration > Number(state.cloudStateGeneration || 0)) {
-      // A per-user hard delete invalidates every older local/anonymous copy;
-      // do not let the legacy device lookup restore it under the same name.
-      state.records = [];
-      state.deletedRecordIds = {};
-      state.recordsUpdatedAt = 0;
-      state.cloudStateGeneration = namedUserGeneration;
-      state.streak = 0;
-    }
+    if (byName && byName.state) sources.push(byName.state);
   } catch (error) {
     logCloud('warn', 'Could not check existing cloud progress for this name.', error);
   }
   try {
     const byDevice = await mod.pullCloudState();
-    if (byDevice && byDevice.state && namedUserGeneration === 0 && !namedStateFound) sources.push(byDevice.state);
+    if (byDevice && byDevice.state) sources.push(byDevice.state);
   } catch (error) {
     logCloud('warn', "Could not check this device's prior cloud progress.", error);
   }
   if (!sources.length) return { merged: false };
 
   const localCount = getRecords().length;
-
-  // Tombstones only ever grow, so union them from every source before
-  // merging records. This is what stops a stale cloud snapshot (or a second
-  // device that never heard about a deletion) from resurrecting a record
-  // the user already deleted elsewhere.
-  let mergedTombstones = { ...normalizeDeletedRecordIds(state.deletedRecordIds) };
-  sources.forEach(src => {
-    mergedTombstones = mergeTombstones(mergedTombstones, src.deletedRecordIds || {});
-  });
-
   let mergedRecords = getRecords();
   sources.forEach(src => {
-    mergedRecords = mergeRecordsUnion(mergedRecords, Array.isArray(src.records) ? src.records : [], mergedTombstones);
+    mergedRecords = mergeRecordsUnion(mergedRecords, Array.isArray(src.records) ? src.records : []);
   });
 
   const gained = mergedRecords.length > localCount;
-  state.deletedRecordIds = mergedTombstones;
-  state.records = mergedRecords;
-  state.recordsUpdatedAt = Math.max(
-    Number(state.recordsUpdatedAt || 0) || 0,
-    ...sources.map(src => Number(src.recordsUpdatedAt || (Array.isArray(src.records) && src.records.length ? src.updatedAt : 0)) || 0)
-  );
-  if (cloudGeneration.userGeneration) state.cloudStateGeneration = cloudGeneration.userGeneration;
-  state.streak = computeCurrentStreak(mergedRecords);
   if (gained) {
+    state.records = mergedRecords;
+    state.streak = computeCurrentStreak(mergedRecords);
     state.achievements = sources.reduce((acc, src) => ({ ...acc, ...(src.achievements || {}) }), state.achievements || {});
   }
   return { merged: gained, mergedCount: mergedRecords.length, localCount };
@@ -602,103 +370,40 @@ async function hydrateProfileFromCloud() {
     localStorage.setItem(PROFILE_KEY, JSON.stringify(state.profile));
   } catch {}
   saveState({ immediate: true, reason: 'profile-hydrated' });
-  updateProfileLabels();
+  if (els.profileName) els.profileName.textContent = normalizedRemote.name;
   if (els.profileModal) closeProfileModal(true);
   render({ skipSave: true });
   return normalizedRemote;
 }
-async function pushCloudStateNow(reason = 'state-change', generationOverride = null) {
+async function pushCloudStateNow(reason = 'state-change') {
   const mod = await ensureCloudSync();
   if (!mod || typeof mod.pushCloudState !== 'function') return { ok: false, reason: 'firebase-unavailable' };
   const snapshot = cloudQueue && cloudQueue.state ? cloudQueue.state : getCloudSafeState();
   const identityName = normalizeProfile(state.profile || loadProfile()).name || '';
-  const generation = normalizeCloudGeneration(generationOverride || cloudGeneration);
-  const result = await mod.pushCloudState(snapshot, {
-    clientId: cloudClientId,
-    reason,
-    identityName,
-    generation: {
-      stateGeneration: generation.stateGeneration,
-      userGeneration: generation.userGeneration
-    }
-  });
+  const result = await mod.pushCloudState(snapshot, { clientId: cloudClientId, reason, identityName });
   if (result && result.ok) {
-    cloudLastAppliedAt = Number(result.updatedAt || snapshot.updatedAt || Date.now()) || Date.now();
-    cloudGeneration = normalizeCloudGeneration(result.currentGeneration || generation);
-    state.cloudStateGeneration = cloudGeneration.userGeneration;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (error) {
-      logCloud('warn', 'Could not persist the acknowledged cloud generation locally.', error);
-    }
+    cloudLastAppliedAt = Number(snapshot.updatedAt || Date.now()) || Date.now();
   }
   return result || { ok: false, reason: 'unknown' };
 }
 function getStudyTotals() {
   const recs = getRecords();
-  // Daily projection: records whose date-key is today.
-  const dailyKey = dkey(new Date());
-  const dailyRecs = recs.filter(r => r.date === dailyKey);
-  // Weekly projection: records whose date falls inside the current
-  // Monday-aligned week (startOfWeek .. startOfWeek + 6 days, inclusive).
-  const weekStart = startOfWeek(new Date());
-  const weekEnd = addDays(weekStart, 6);
-  const weekStartKey = dkey(weekStart);
-  const weekEndKey = dkey(weekEnd);
-  const weeklyRecs = recs.filter(r => r.date >= weekStartKey && r.date <= weekEndKey);
   return {
     totalMinutes: recs.reduce((a, r) => a + (Number(r.minutes) || 0), 0),
-    totalQuestions: recs.reduce((a, r) => a + (Number(r.questions) || 0), 0),
-    dailyKey,
-    dailyMinutes: dailyRecs.reduce((a, r) => a + (Number(r.minutes) || 0), 0),
-    dailyQuestions: dailyRecs.reduce((a, r) => a + (Number(r.questions) || 0), 0),
-    weekKey: weekStartKey,
-    weeklyMinutes: weeklyRecs.reduce((a, r) => a + (Number(r.minutes) || 0), 0),
-    weeklyQuestions: weeklyRecs.reduce((a, r) => a + (Number(r.questions) || 0), 0)
+    totalQuestions: recs.reduce((a, r) => a + (Number(r.questions) || 0), 0)
   };
 }
-async function syncLeaderboardNow(reason = 'state-change', generationOverride = null) {
+async function syncLeaderboardNow(reason = 'state-change') {
   const mod = await ensureCloudSync();
   if (!mod || typeof mod.pushLeaderboardStats !== 'function') return false;
   const profile = normalizeProfile(state.profile || loadProfile());
   if (!profile.name) return false;
-  const generation = normalizeCloudGeneration(generationOverride || await refreshCloudGeneration(profile.name));
-  const localRecordsUpdatedAt = Number(state.recordsUpdatedAt || 0) || 0;
-  if (!localRecordsUpdatedAt) return false;
-  if (generation.userGeneration !== Number(state.cloudStateGeneration || 0)) {
-    await pullCloudStateIfNewer({ force: true, reason: 'user-generation-reconcile' });
-    logCloud('info', 'Skipping leaderboard push: local state belongs to an older user generation.', {
-      reason,
-      localUserGeneration: state.cloudStateGeneration,
-      generation
-    });
-    return false;
-  }
   const stats = getStudyTotals();
   const result = await mod.pushLeaderboardStats(profile, stats, {
     clientId: cloudClientId,
-    updatedAt: Number(state.updatedAt || Date.now()) || Date.now(),
-    recordsUpdatedAt: localRecordsUpdatedAt,
-    reason,
-    // Daily/weekly projections ride on the same doc as the all-time totals.
-    periods: {
-      dailyKey: stats.dailyKey,
-      dailyMinutes: stats.dailyMinutes,
-      dailyQuestions: stats.dailyQuestions,
-      weekKey: stats.weekKey,
-      weeklyMinutes: stats.weeklyMinutes,
-      weeklyQuestions: stats.weeklyQuestions
-    },
-    generation: {
-      leaderboardGeneration: generation.leaderboardGeneration,
-      userGeneration: generation.userGeneration
-    }
+    updatedAt: state.updatedAt || Date.now(),
+    reason
   });
-  if (result && result.reason === 'generation-mismatch') {
-    cloudGeneration = normalizeCloudGeneration(result.currentGeneration || generation);
-    await pullCloudStateIfNewer({ force: true, reason: 'leaderboard-generation-reconcile' });
-    return false;
-  }
   return Boolean(result && result.ok);
 }
 async function refreshLeaderboard(options = {}) {
@@ -714,62 +419,15 @@ async function refreshLeaderboard(options = {}) {
     return leaderboardRows;
   }
 }
-function applyCloudSnapshot(remoteState, remoteUpdatedAt, source = 'remote', remoteMeta = {}) {
+function applyCloudSnapshot(remoteState, remoteUpdatedAt, source = 'remote') {
   if (!remoteState || typeof remoteState !== 'object') return false;
   const currentUpdatedAt = Number(state.updatedAt || 0) || 0;
   const nextUpdatedAt = Number(remoteUpdatedAt || remoteState.updatedAt || 0) || 0;
-  const localRecordsUpdatedAt = Number(state.recordsUpdatedAt || 0) || 0;
-  const remoteRecordsUpdatedAt = Number(remoteState.recordsUpdatedAt || (Array.isArray(remoteState.records) && remoteState.records.length ? remoteState.updatedAt : 0)) || 0;
-  const localTombstones = normalizeDeletedRecordIds(state.deletedRecordIds);
-  const remoteTombstones = normalizeDeletedRecordIds(remoteState.deletedRecordIds || {});
-
-  // Tombstones only ever grow — union them before merging records so a
-  // deletion made on this device (or already known to the cloud) can never
-  // be undone by the other side's snapshot, no matter which side is
-  // "newer" by timestamp.
-  const mergedTombstones = mergeTombstones(localTombstones, remoteTombstones);
-  const mergedRecords = mergeRecordsUnion(getRecords(), Array.isArray(remoteState.records) ? remoteState.records : [], mergedTombstones);
-  const localRecords = getRecords();
-  const tombstonesChanged = Object.keys(mergedTombstones).length !== Object.keys(localTombstones).length
-    || Object.keys(mergedTombstones).some(id => mergedTombstones[id] !== localTombstones[id]);
-  const recordsChanged = mergedRecords.length !== localRecords.length
-    || mergedRecords.some((record, index) => record.id !== localRecords[index]?.id);
-  const applyNewerBlob = nextUpdatedAt > currentUpdatedAt;
-  if (!applyNewerBlob && !tombstonesChanged && !recordsChanged) return false;
-  const localUserGeneration = Number(state.cloudStateGeneration || 0) || 0;
-  const remoteUserGeneration = Number(remoteMeta.userGeneration || 0) || 0;
-  const remoteRecordIds = new Set((Array.isArray(remoteState.records) ? remoteState.records : []).map(record => String(record && record.id || '')));
-  const localDurableContribution = localRecordsUpdatedAt > remoteRecordsUpdatedAt
-    || localRecords.some(record => !remoteRecordIds.has(record.id))
-    || Object.keys(localTombstones).some(id => !remoteTombstones[id]);
-
-  // Preserve local ephemeral timer state before merging — cloud pulls must
-  // never clobber a running timer. Only durable data (records, settings,
-  // profile, achievements, theme) should come from the cloud snapshot.
-  const localTimer = {
-    running: state.running,
-    remaining: state.remaining,
-    total: state.total,
-    currentMode: state.currentMode,
-    cycleCount: state.cycleCount,
-    timerCheckpoint: state.timerCheckpoint,
-    pendingSession: state.pendingSession,
-    page: state.page,
-  };
-
-  state = normalizeState({
-    ...(applyNewerBlob ? { ...cloneDefaultState(), ...remoteState } : state),
-    records: mergedRecords,
-    deletedRecordIds: mergedTombstones,
-    recordsUpdatedAt: Math.max(localRecordsUpdatedAt, remoteRecordsUpdatedAt),
-    cloudStateGeneration: Math.max(localUserGeneration, remoteUserGeneration)
-  });
-
-  // Restore timer state — cloud must not disturb the local running timer
-  Object.assign(state, localTimer);
-
-  state.updatedAt = Math.max(currentUpdatedAt, nextUpdatedAt);
-  cloudLastAppliedAt = Math.max(cloudLastAppliedAt, nextUpdatedAt);
+  if (nextUpdatedAt <= currentUpdatedAt) return false;
+  const mergedRecords = mergeRecordsUnion(getRecords(), Array.isArray(remoteState.records) ? remoteState.records : []);
+  state = normalizeState({ ...cloneDefaultState(), ...remoteState, records: mergedRecords });
+  state.updatedAt = nextUpdatedAt;
+  cloudLastAppliedAt = nextUpdatedAt;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (error) {
@@ -777,9 +435,6 @@ function applyCloudSnapshot(remoteState, remoteUpdatedAt, source = 'remote', rem
   }
   if (cloudQueue && Number(cloudQueue.state?.updatedAt || 0) <= nextUpdatedAt) {
     clearCloudQueue();
-  }
-  if (localDurableContribution && (!remoteUserGeneration || remoteUserGeneration <= localUserGeneration)) {
-    queueCloudSync({ reason: 'record-merge-reconcile', immediate: true });
   }
   return true;
 }
@@ -789,39 +444,19 @@ async function pullCloudStateIfNewer(options = {}) {
   if (!options.force && navigator.onLine === false) return false;
   const identityName = normalizeProfile(state.profile || loadProfile()).name || '';
   const remote = await mod.pullCloudState(identityName);
-  if (!remote) return false;
-  const remoteUserGeneration = Number(remote.userGeneration || 0) || 0;
-  if (!remote.state) {
-    if (remoteUserGeneration <= Number(state.cloudStateGeneration || 0)) return false;
-    state.records = [];
-    state.deletedRecordIds = normalizeDeletedRecordIds(state.deletedRecordIds);
-    state.streak = 0;
-    state.cloudStateGeneration = remoteUserGeneration;
-    state.updatedAt = Math.max(Number(state.updatedAt || 0) || 0, Number(remote.updatedAt || 0) || 0);
-    clearCloudQueue();
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (error) {
-      logCloud('error', 'Failed to persist hard-delete reconciliation locally.', error);
-    }
-    return true;
-  }
+  if (!remote || !remote.state) return false;
   const remoteUpdatedAt = Number(remote.updatedAt || remote.state.updatedAt || 0) || 0;
   const localUpdatedAt = Number(state.updatedAt || 0) || 0;
-  const localRecordsUpdatedAt = Number(state.recordsUpdatedAt || 0) || 0;
-  const remoteRecordsUpdatedAt = Number(remote.state.recordsUpdatedAt || (Array.isArray(remote.state.records) && remote.state.records.length ? remote.state.updatedAt : 0)) || 0;
   const queuedUpdatedAt = Number(cloudQueue?.state?.updatedAt || 0) || 0;
-  const needsRecordReconcile = remoteRecordsUpdatedAt > localRecordsUpdatedAt;
-  const needsUserGenerationReconcile = remoteUserGeneration > Number(state.cloudStateGeneration || 0);
-  if (remoteUpdatedAt <= Math.max(cloudLastAppliedAt, localUpdatedAt) && !needsRecordReconcile && !needsUserGenerationReconcile) return false;
-  if (queuedUpdatedAt > remoteUpdatedAt && !needsUserGenerationReconcile) {
+  if (remoteUpdatedAt <= Math.max(cloudLastAppliedAt, localUpdatedAt)) return false;
+  if (queuedUpdatedAt > remoteUpdatedAt) {
     logCloud('info', 'Keeping queued local state because it is newer than the cloud snapshot.', {
       queuedUpdatedAt,
       remoteUpdatedAt
     });
     return false;
   }
-  const changed = applyCloudSnapshot(remote.state, remoteUpdatedAt, 'pull', remote);
+  const changed = applyCloudSnapshot(remote.state, remoteUpdatedAt, 'pull');
   if (changed) {
     logCloud('info', 'Applied newer cloud state locally.', {
       remoteUpdatedAt,
@@ -862,59 +497,19 @@ async function flushCloudSync(options = {}) {
   const queueAtStart = cloudQueue;
 
   try {
-    const identityName = normalizeProfile(state.profile || loadProfile()).name || '';
-    const generation = await refreshCloudGeneration({ force: true, identityName });
-    const queueUpdatedAt = Number(cloudQueue?.state?.updatedAt || 0) || 0;
-    const generationUpdatedAt = Number(generation?.updatedAt || 0) || 0;
-    const queuedGeneration = normalizeCloudGeneration(cloudQueue?.generation || {});
-    const generationMismatch = queuedGeneration.stateGeneration !== generation.stateGeneration
-      || queuedGeneration.userGeneration !== generation.userGeneration;
-    if ((generationUpdatedAt && queueUpdatedAt && queueUpdatedAt <= generationUpdatedAt) || generationMismatch) {
-      logCloud('info', 'Dropping stale cloud queue after generation bump.', {
-        queueUpdatedAt,
-        generationUpdatedAt,
-        queuedGeneration,
-        generation,
-        reason: options.reason || 'state-change'
-      });
-      clearCloudQueue();
-      await pullCloudStateIfNewer({ force: true, reason: options.reason || 'generation-reconcile' });
-      return false;
-    }
-
-    const result = await pushCloudStateNow(options.reason || 'state-change', generation);
+    const result = await pushCloudStateNow(options.reason || 'state-change');
     if (result && result.ok) {
       logCloud('info', 'Cloud sync completed.', { reason: options.reason || 'state-change', updatedAt: cloudLastAppliedAt });
       if (cloudQueue === queueAtStart) {
         clearCloudQueue();
       }
-      void syncLeaderboardNow(options.reason || 'state-change', generation);
+      void syncLeaderboardNow(options.reason || 'state-change');
       void refreshLeaderboard({ force: true });
       return true;
     }
 
-    if (result && result.reason === 'generation-mismatch') {
-      const latestGeneration = normalizeCloudGeneration(await refreshCloudGeneration({ force: true, identityName }));
-      const staleQueueUpdatedAt = Number(cloudQueue?.state?.updatedAt || 0) || 0;
-      const latestGenerationUpdatedAt = Number(latestGeneration.updatedAt || 0) || 0;
-      cloudGeneration = latestGeneration;
-      if (!staleQueueUpdatedAt || (latestGenerationUpdatedAt && staleQueueUpdatedAt <= latestGenerationUpdatedAt)) {
-        clearCloudQueue();
-        await pullCloudStateIfNewer({ force: true, reason: options.reason || 'post-wipe-reconcile' });
-        return false;
-      }
-      if (getRecords().length > 0 && Number(state.updatedAt || 0) > latestGenerationUpdatedAt) {
-        queueCloudSync({ reason: 'post-wipe-fresh-data', immediate: true });
-      } else {
-        clearCloudQueue();
-      }
-      return false;
-    }
-
     if (result && result.stale) {
-      const applied = applyCloudSnapshot(result.remoteState, result.remoteUpdatedAt, 'stale-cloud', {
-        userGeneration: result.remoteUserGeneration || result.currentGeneration?.userGeneration || 0
-      });
+      const applied = applyCloudSnapshot(result.remoteState, result.remoteUpdatedAt, 'stale-cloud');
       if (applied) {
         logCloud('warn', 'Cloud state won the conflict and was applied locally.', result);
       }
@@ -948,43 +543,13 @@ async function flushCloudSync(options = {}) {
 }
 async function reconcileCloudState(options = {}) {
   if (!CLOUD_SYNC_ENABLED) return false;
-  let changed = false;
+  let changed = Boolean(await pullCloudStateIfNewer({ force: true, reason: options.reason || 'reconcile' }));
   if (cloudQueue && cloudQueue.state) {
     changed = Boolean(await flushCloudSync({ force: Boolean(options.force || navigator.onLine !== false), reason: options.reason || 'reconcile' })) || changed;
   }
-  changed = Boolean(await pullCloudStateIfNewer({ force: true, reason: options.reason || 'reconcile' })) || changed;
   return changed;
 }
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-
-/* Lock background scroll while any modal/overlay is open. Locks BOTH <html>
-   and <body> because iOS Safari scrolls via <html> while most other engines
-   scroll via <body>. Also captures/restores the scroll position so closing
-   the modal returns the user to exactly where they were. */
-let __scrollLockOpenCount = 0;
-let __savedScrollY = 0;
-function setScrollLock(on) {
-  if (on) {
-    if (__scrollLockOpenCount === 0) {
-      __savedScrollY = window.scrollY || window.pageYOffset || 0;
-    }
-    __scrollLockOpenCount++;
-    document.documentElement.classList.add('modal-open');
-    document.body.classList.add('modal-open');
-    // Nudge the page back to the top of the viewport so the fixed overlay
-    // stays centered without a blank gap where the content used to be.
-    if (__scrollLockOpenCount === 1) {
-      window.scrollTo(0, 0);
-    }
-  } else {
-    __scrollLockOpenCount = Math.max(0, __scrollLockOpenCount - 1);
-    if (__scrollLockOpenCount === 0) {
-      document.documentElement.classList.remove('modal-open');
-      document.body.classList.remove('modal-open');
-      window.scrollTo(0, __savedScrollY || 0);
-    }
-  }
-}
 function fmt(sec) {
   sec = Math.max(0, Math.round(sec));
   return `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
@@ -994,13 +559,6 @@ function minutesToHuman(mins) {
   const h = Math.floor(mins / 60);
   const m = mins % 60;
   return h ? `${h}h ${String(m).padStart(2, '0')}m` : `${m}m`;
-}
-function minutesToAxisLabel(mins) {
-  const total = Math.max(0, Math.round(Number(mins) || 0));
-  if (total < 60) return `${total}m`;
-  const hours = Math.floor(total / 60);
-  const remainder = total % 60;
-  return remainder ? `${hours}h ${remainder}m` : `${hours}h`;
 }
 function dkey(date) {
   return [
@@ -1076,116 +634,59 @@ function normalizeRecord(record) {
   };
 }
 
-// Tombstones record which ids were deleted and when. They must remain durable
-// across every device that may still have an old cache; pruning them on a
-// calendar timer would re-open the resurrection bug. A future authenticated
-// cleanup job can prune them only after all devices are known to have synced.
-function normalizeDeletedRecordIds(map) {
-  const out = {};
-  if (!map || typeof map !== 'object') return out;
-  Object.keys(map).forEach(id => {
-    const ts = Number(map[id]) || 0;
-    if (ts > 0) out[String(id)] = ts;
-  });
-  return out;
-}
-function mergeTombstones(localTombstones, remoteTombstones) {
-  const merged = { ...normalizeDeletedRecordIds(localTombstones) };
-  const remote = normalizeDeletedRecordIds(remoteTombstones);
-  Object.keys(remote).forEach(id => {
-    if (!merged[id] || remote[id] > merged[id]) merged[id] = remote[id];
-  });
-  return merged;
-}
-
 // Combines two record lists without losing data from either side. Used any
 // time local state and cloud state need to be reconciled, so a sync never
-// silently replaces real progress with an empty/zero snapshot. Any id
-// present in `tombstones` is excluded — a deletion known to either side
-// always wins the merge, so a stale device can't resurrect a record the
-// user deleted elsewhere.
-function mergeRecordsUnion(localRecords, remoteRecords, tombstones = {}) {
+// silently replaces real progress with an empty/zero snapshot.
+function mergeRecordsUnion(localRecords, remoteRecords) {
   const seen = new Map();
   [...(Array.isArray(localRecords) ? localRecords : []), ...(Array.isArray(remoteRecords) ? remoteRecords : [])]
     .forEach(raw => {
       const record = normalizeRecord(raw);
-      if (record && !seen.has(record.id) && !tombstones[record.id]) seen.set(record.id, record);
+      if (record && !seen.has(record.id)) seen.set(record.id, record);
     });
   return Array.from(seen.values())
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 1000);
 }
 
-function nextRecordsUpdatedAt(previous = state.recordsUpdatedAt) {
-  return Math.max(Date.now(), (Number(previous || 0) || 0) + 1);
-}
-
 function normalizeState(nextState) {
   const normalized = { ...cloneDefaultState(), ...(nextState && typeof nextState === 'object' ? nextState : {}) };
   normalized.currentMode = ['focus', 'short', 'long'].includes(normalized.currentMode) ? normalized.currentMode : 'focus';
   normalized.analyticsView = normalized.analyticsView === 'monthly' ? 'monthly' : 'weekly';
-  normalized.leaderboardScope = ['daily', 'weekly', 'alltime'].includes(normalized.leaderboardScope)
-    ? normalized.leaderboardScope
-    : 'daily';
-  // Legacy settings/achievements destinations now live in the consolidated
-  // Other page, so synced state keeps the person in the relevant area.
-  normalized.page = ['settings', 'achievements'].includes(normalized.page) ? 'other' : normalized.page;
-  normalized.page = ['timer', 'analytics', 'leaderboard', 'other'].includes(normalized.page) ? normalized.page : 'timer';
-  normalized.otherView = ['profile', 'settings', 'achievements', 'data'].includes(normalized.otherView) ? normalized.otherView : 'settings';
-  normalized.settingsView = ['timer', 'flow', 'appearance'].includes(normalized.settingsView) ? normalized.settingsView : 'timer';
-  normalized.achievementView = ['daily', 'permanent', 'guide'].includes(normalized.achievementView) ? normalized.achievementView : 'daily';
+  normalized.page = normalized.page === 'analytics' ? 'analytics' : 'timer';
   normalized.lastSubject = safeSubject(normalized.lastSubject);
   normalized.analyticsSelections = {
     weekly: Number.isFinite(normalized.analyticsSelections?.weekly) ? normalized.analyticsSelections.weekly : -1,
     monthly: Number.isFinite(normalized.analyticsSelections?.monthly) ? normalized.analyticsSelections.monthly : -1
   };
   normalized.achievements = { ...cloneDefaultState().achievements, ...(normalized.achievements || {}) };
-  normalized.achievementDay = isDateKey(normalized.achievementDay) ? normalized.achievementDay : '';
-  normalized.achievementDates = Object.fromEntries(
-    Object.entries(normalized.achievementDates || {})
-      .filter(([, date]) => isDateKey(date))
-  );
-  normalized.noBreakMode = Boolean(normalized.noBreakMode);
   normalized.profile = normalizeProfile(normalized.profile || loadProfile());
-  normalized.todos = normalizeTodos(normalized.todos);
-  normalized.deletedRecordIds = normalizeDeletedRecordIds(normalized.deletedRecordIds);
   const seenRecordIds = new Set();
   normalized.records = Array.isArray(normalized.records)
     ? normalized.records
       .map(normalizeRecord)
       .filter(record => {
-        if (!record || seenRecordIds.has(record.id) || normalized.deletedRecordIds[record.id]) return false;
+        if (!record || seenRecordIds.has(record.id)) return false;
         seenRecordIds.add(record.id);
         return true;
       })
       .slice(0, 1000)
     : [];
-  normalized.recordsUpdatedAt = Math.max(
-    0,
-    Number(normalized.recordsUpdatedAt || (normalized.records.length ? normalized.updatedAt : 0)) || 0
-  );
-  normalized.cloudStateGeneration = Math.max(0, Number(normalized.cloudStateGeneration || 0) || 0);
   normalized.cycleCount = Math.max(1, Math.min(999, Number.parseInt(normalized.cycleCount, 10) || 1));
   normalized.running = Boolean(normalized.running);
   normalized.pendingSession = normalizePendingSession(normalized.pendingSession);
   normalized.timerCheckpoint = normalizeTimerCheckpoint(normalized.timerCheckpoint);
-  normalized.theme = ['nebula', 'ocean', 'ember', 'aurora'].includes(normalized.theme) ? normalized.theme : 'nebula';
-  const parsedSoundVolume = Number(normalized.soundVolume);
-  normalized.soundVolume = Number.isFinite(parsedSoundVolume) ? clamp(parsedSoundVolume, 0, 1) : 0.7;
-  normalized.todoCollapsed = Boolean(normalized.todoCollapsed);
   return normalized;
 }
 
 function normalizePendingSession(session) {
   if (!session || typeof session !== 'object') return null;
-  return createPendingSession({
-    minutes: session.minutes,
-    nextMode: session.nextMode,
-    sessionDate: session.sessionDate,
-    roundCompleted: session.roundCompleted,
-    wasNoBreak: session.wasNoBreak,
-    restoreState: session.restoreState
-  });
+  return {
+    minutes: Math.max(1, Math.min(24 * 60, Math.round(Number(session.minutes) || 25))),
+    nextMode: ['short', 'long'].includes(session.nextMode) ? session.nextMode : 'short',
+    sessionDate: isDateKey(session.sessionDate) ? session.sessionDate : dkey(new Date()),
+    roundCompleted: Math.max(1, Number.parseInt(session.roundCompleted, 10) || 1)
+  };
 }
 
 function normalizeTimerCheckpoint(checkpoint) {
@@ -1199,217 +700,7 @@ function normalizeTimerCheckpoint(checkpoint) {
   };
 }
 
-function normalizeTimerSnapshot(snapshot) {
-  if (!snapshot || typeof snapshot !== 'object') return null;
-  return {
-    currentMode: ['focus', 'short', 'long'].includes(snapshot.currentMode) ? snapshot.currentMode : 'focus',
-    remaining: Math.max(0, Number(snapshot.remaining) || 0),
-    total: Math.max(1, Number(snapshot.total) || 1),
-    cycleCount: Math.max(1, Number.parseInt(snapshot.cycleCount, 10) || 1),
-    running: Boolean(snapshot.running)
-  };
-}
-
-function createTodoId() {
-  if (window.crypto && typeof window.crypto.randomUUID === 'function') {
-    return window.crypto.randomUUID();
-  }
-  return `todo-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
-function normalizeTodo(todo) {
-  if (!todo || typeof todo !== 'object') return null;
-  const text = String(todo.text || '').trim().slice(0, 120);
-  if (!text) return null;
-  return {
-    id: String(todo.id || createTodoId()),
-    text,
-    completed: Boolean(todo.completed),
-    createdAt: Math.max(0, Number(todo.createdAt || Date.now()) || Date.now()),
-    completedAt: todo.completed ? Math.max(0, Number(todo.completedAt || 0) || 0) : 0
-  };
-}
-
-function normalizeTodos(todos) {
-  if (!Array.isArray(todos)) return [];
-  const seen = new Set();
-  return todos
-    .map(normalizeTodo)
-    .filter(todo => {
-      if (!todo || seen.has(todo.id)) return false;
-      seen.add(todo.id);
-      return true;
-    })
-    .slice(0, 200);
-}
-
-function createTimerSnapshot() {
-  return normalizeTimerSnapshot({
-    currentMode: state.currentMode,
-    remaining: state.remaining,
-    total: state.total,
-    cycleCount: state.cycleCount,
-    running: state.running
-  });
-}
-
-function createPendingSession(base = {}) {
-  return {
-    minutes: Math.max(1, Math.min(24 * 60, Math.round(Number(base.minutes) || state.focus))),
-    nextMode: ['short', 'long'].includes(base.nextMode) ? base.nextMode : 'short',
-    sessionDate: isDateKey(base.sessionDate) ? base.sessionDate : dkey(new Date()),
-    roundCompleted: Math.max(1, Number.parseInt(base.roundCompleted, 10) || 1),
-    wasNoBreak: Boolean(base.wasNoBreak),
-    restoreState: normalizeTimerSnapshot(base.restoreState || createTimerSnapshot())
-  };
-}
-
-function restorePendingSessionState(options = {}) {
-  const pending = state.pendingSession;
-  if (!pending) return false;
-  const snapshot = normalizeTimerSnapshot(options.snapshot || pending.restoreState);
-  state.pendingSession = null;
-  closeSessionModal();
-  if (snapshot) {
-    state.currentMode = snapshot.currentMode;
-    state.remaining = snapshot.remaining;
-    state.total = snapshot.total;
-    state.cycleCount = snapshot.cycleCount;
-    state.running = false;
-    timerPerfStamp = 0;
-    state.timerCheckpoint = null;
-    clearInterval(interval);
-    interval = null;
-    releaseWakeLock();
-    if (state.currentMode === 'focus') {
-      els.statusPill.textContent = 'Ready to lock in';
-    } else {
-      els.statusPill.textContent = 'Break ready';
-    }
-  }
-  return true;
-}
-
 function getRecords() { return Array.isArray(state.records) ? state.records : []; }
-
-function getTodos() {
-  return Array.isArray(state.todos) ? state.todos : [];
-}
-
-function renderTodoList() {
-  if (!els.todoList || !els.todoEmpty) return;
-  const todos = getTodos();
-  const openCount = todos.filter(todo => !todo.completed).length;
-  const doneCount = todos.length - openCount;
-  const visible = todos.filter(todo => (
-    todoFilter === 'all' ||
-    (todoFilter === 'done' ? todo.completed : !todo.completed)
-  ));
-
-  els.todoList.replaceChildren();
-  visible.forEach(todo => {
-    const item = document.createElement('li');
-    item.className = `todo-item${todo.completed ? ' is-complete' : ''}`;
-
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = todo.completed;
-    checkbox.className = 'todo-checkbox';
-    checkbox.setAttribute('aria-label', `${todo.completed ? 'Mark incomplete' : 'Complete'}: ${todo.text}`);
-    checkbox.addEventListener('change', () => updateTodo(todo.id, checkbox.checked));
-
-    const text = document.createElement('span');
-    text.className = 'todo-text';
-    text.textContent = todo.text;
-
-    const deleteButton = document.createElement('button');
-    deleteButton.type = 'button';
-    deleteButton.className = 'todo-delete-btn';
-    deleteButton.setAttribute('aria-label', `Delete task: ${todo.text}`);
-    deleteButton.textContent = '×';
-    deleteButton.addEventListener('click', () => deleteTodo(todo.id));
-
-    item.append(checkbox, text, deleteButton);
-    els.todoList.append(item);
-  });
-
-  els.todoEmpty.hidden = visible.length > 0;
-  if (!visible.length) {
-    els.todoEmpty.textContent = todoFilter === 'done'
-      ? 'Completed tasks will appear here.'
-      : todoFilter === 'all'
-        ? 'Your next clear action goes here.'
-        : 'Your queue is clear. Add the next useful step.';
-  }
-  if (els.todoCount) els.todoCount.textContent = `${openCount} open`;
-  if (els.todoHint) {
-    els.todoHint.textContent = openCount
-      ? `${openCount} task${openCount === 1 ? '' : 's'} ready for your next focus block.`
-      : doneCount
-        ? 'Nice work. Your open queue is clear.'
-        : 'Short, specific tasks are easier to start.';
-  }
-  if (els.todoClearCompleted) els.todoClearCompleted.disabled = doneCount === 0;
-  document.querySelectorAll('[data-todo-filter]').forEach(button => {
-    const active = button.dataset.todoFilter === todoFilter;
-    button.classList.toggle('active', active);
-    button.setAttribute('aria-selected', String(active));
-  });
-  // Keep the collapsed-mode restore chip in sync so it always shows the live
-  // open count even while the panel itself is hidden.
-  if (els.todoRestoreCount) els.todoRestoreCount.textContent = `${openCount} open`;
-}
-
-/* Toggle the focus queue between expanded and minimised on every viewport.
-   Minimising hides the panel, lets the active page expand to full shell
-   width, and reveals a floating chip that brings the panel back. The
-   preference is persisted so it survives reloads. */
-function setTodoCollapsed(collapsed) {
-  state.todoCollapsed = Boolean(collapsed);
-  document.body.classList.toggle('todo-collapsed', state.todoCollapsed);
-  if (els.todoCollapseBtn) {
-    els.todoCollapseBtn.setAttribute('aria-expanded', String(!state.todoCollapsed));
-  }
-  if (els.todoRestoreChip) {
-    els.todoRestoreChip.setAttribute('aria-expanded', String(state.todoCollapsed));
-  }
-  saveState({ skipCloud: true, reason: 'todo-collapse-toggled' });
-}
-
-function addTodo(text) {
-  const value = String(text || '').trim().slice(0, 120);
-  if (!value) return false;
-  state.todos = [{ id: createTodoId(), text: value, completed: false, createdAt: Date.now(), completedAt: 0 }, ...getTodos()];
-  saveState({ immediate: true, reason: 'todo-added' });
-  renderTodoList();
-  return true;
-}
-
-function updateTodo(id, completed) {
-  const todo = getTodos().find(item => item.id === id);
-  if (!todo) return;
-  todo.completed = Boolean(completed);
-  todo.completedAt = todo.completed ? Date.now() : 0;
-  if (todo.completed) playSound('todoComplete');
-  saveState({ immediate: true, reason: todo.completed ? 'todo-completed' : 'todo-reopened' });
-  renderTodoList();
-}
-
-function deleteTodo(id) {
-  const previousLength = getTodos().length;
-  state.todos = getTodos().filter(todo => todo.id !== id);
-  if (state.todos.length === previousLength) return;
-  saveState({ immediate: true, reason: 'todo-deleted' });
-  renderTodoList();
-}
-
-function clearCompletedTodos() {
-  const remaining = getTodos().filter(todo => !todo.completed);
-  if (remaining.length === getTodos().length) return;
-  state.todos = remaining;
-  saveState({ immediate: true, reason: 'todos-cleared' });
-  renderTodoList();
-}
 
 function computeCurrentStreak(records = getRecords()) {
   if (!records.length) return 0;
@@ -1442,21 +733,16 @@ function advanceCycleAfterFocus(round = state.cycleCount) {
   state.cycleCount = round % state.roundsBeforeLong === 0 ? 1 : round + 1;
 }
 function modeName(mode) {
-  if (mode === 'focus') return state.noBreakMode ? 'Continuous focus' : 'Focus';
-  return mode === 'short' ? 'Short break' : 'Long break';
+  return mode === 'focus' ? 'Focus' : mode === 'short' ? 'Short break' : 'Long break';
 }
 function subjectColorClass(subject) {
   return subject === 'Physics' ? 'phy' : subject === 'Chemistry' ? 'chem' : 'math';
 }
-function showToast(msg, ms = 2200, options = {}) {
+function showToast(msg, ms = 2200) {
   els.toast.textContent = msg;
-  els.toast.classList.toggle('achievement-toast', Boolean(options.achievement));
   els.toast.classList.remove('hidden');
   clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => {
-    els.toast.classList.add('hidden');
-    els.toast.classList.remove('achievement-toast');
-  }, ms);
+  showToast._t = setTimeout(() => els.toast.classList.add('hidden'), ms);
 }
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (char) => ({
@@ -1467,114 +753,28 @@ function escapeHtml(value) {
     "'": '&#39;'
   }[char]));
 }
-function updatePageNavigation() {
-  const activePage = state.page;
-  document.body.dataset.activePage = activePage;
-  const activePanel = document.getElementById(`${activePage}Page`);
-  if (els.tabPill && activePanel) {
-    const pageStyles = getComputedStyle(activePanel);
-    ['--pa', '--pa-dim', '--pa-border', '--pa-text'].forEach(token => {
-      els.tabPill.style.setProperty(`--tab-accent${token.slice(4)}`, pageStyles.getPropertyValue(token));
-    });
-  }
-  document.querySelectorAll('.tab-pill-item[data-page]').forEach(btn => {
-    const active = btn.dataset.page === activePage;
-    btn.classList.toggle('active', active);
-    btn.setAttribute('aria-selected', String(active));
-  });
+function openDrawer() {
+  els.drawer.classList.remove('hidden');
+  els.drawerBackdrop.classList.remove('hidden');
 }
-function renderOtherView() {
-  const view = ['profile', 'settings', 'achievements', 'data'].includes(state.otherView) ? state.otherView : 'settings';
-  const panelByView = {
-    profile: els.profilePanel,
-    settings: els.settingsPage,
-    achievements: els.achievementsPage,
-    data: $('dataPanel')
-  };
-  Object.entries(panelByView).forEach(([key, panel]) => {
-    if (!panel) return;
-    const active = key === view;
-    panel.classList.toggle('active', active);
-    panel.classList.toggle('hidden', !active);
-    panel.setAttribute('aria-hidden', String(!active));
-  });
-  document.querySelectorAll('.other-tab[data-other-view]').forEach(btn => {
-    const active = btn.dataset.otherView === view;
-    btn.classList.toggle('active', active);
-    btn.setAttribute('aria-selected', String(active));
-  });
-}
-function setOtherView(view) {
-  state.otherView = ['profile', 'settings', 'achievements', 'data'].includes(view) ? view : 'settings';
-  renderOtherView();
-  if (state.otherView === 'achievements') revealAchievementsOnOpen();
-  saveState();
+function closeDrawer() {
+  els.drawer.classList.add('hidden');
+  els.drawerBackdrop.classList.add('hidden');
 }
 function setPage(page) {
-  state.page = ['timer', 'analytics', 'leaderboard', 'other'].includes(page) ? page : 'timer';
-  els.timerPage.classList.toggle('active', state.page === 'timer');
-  if (els.analyticsPage) els.analyticsPage.classList.toggle('active', state.page === 'analytics');
-  if (els.leaderboardPage) els.leaderboardPage.classList.toggle('active', state.page === 'leaderboard');
-  if (els.otherPage) els.otherPage.classList.toggle('active', state.page === 'other');
-  updatePageNavigation();
-  if (syncTopbarScroll) syncTopbarScroll();
-  if (state.page === 'other') {
-    renderOtherView();
-    revealAchievementsOnOpen();
-  }
+  state.page = page;
+  els.timerPage.classList.toggle('active', page === 'timer');
+  els.analyticsPage.classList.toggle('active', page === 'analytics');
+  document.querySelectorAll('.drawer-item[data-page]').forEach(btn => btn.classList.toggle('active', btn.dataset.page === page));
   saveState();
+  closeDrawer();
   render();
 }
 function renderTimerOnly() {
   els.timer.textContent = fmt(state.remaining);
   const pct = 1 - (state.remaining / state.total);
   els.progressRing.style.strokeDashoffset = String(CIRC * (1 - pct));
-  positionComet(pct);
   document.title = `${fmt(state.remaining)} • ${modeName(state.currentMode)}`;
-}
-function updateTimerVisualState() {
-  const running = Boolean(state.running);
-  const isFocus = state.currentMode === 'focus';
-  if (els.timerPage) {
-    els.timerPage.style.setProperty('--session-duration', `${Math.max(1, Number(state.total) || 1)}s`);
-  }
-  document.body.dataset.timerRunning = running ? 'true' : 'false';
-  document.body.dataset.timerMode = state.currentMode;
-  els.timerPage.classList.toggle('is-running', running);
-  els.timerPage.classList.toggle('is-paused', !running && state.remaining < state.total);
-  const themeFocusNames = {
-    nebula: 'Study Grove',
-    ocean: 'Lagoon Focus',
-    ember: 'Hearth Focus',
-    aurora: 'Bloom Focus'
-  };
-  const effectiveTheme = document.body.dataset.effectiveTheme || state.theme;
-  els.heroTitle.textContent = running
-    ? (isFocus ? 'Focus mode' : 'Take a breather')
-    : (isFocus ? (themeFocusNames[effectiveTheme] || 'Study Grove') : 'Break ready');
-  if (els.focusContext) {
-    els.focusContext.textContent = running
-      ? (isFocus ? 'Protect this block of time.' : 'Reset your energy before the next round.')
-      : (state.pendingSession ? 'Capture what you finished while it is fresh.' : isFocus ? 'A clean block of time, just for you.' : 'A small pause makes the next round sharper.');
-  }
-  els.startPauseBtn.setAttribute('aria-label', running ? 'Pause timer' : 'Start timer');
-  els.startPauseBtn.title = running ? 'Pause timer (Space)' : 'Start timer (Space)';
-}
-function renderRoundTracker() {
-  if (!els.roundTracker) return;
-  const totalRounds = state.noBreakMode ? Math.max(4, Math.min(8, state.roundsBeforeLong)) : state.roundsBeforeLong;
-  const currentRound = Math.max(1, Number(state.cycleCount) || 1);
-  els.roundTracker.innerHTML = Array.from({ length: totalRounds }, (_, index) => {
-    const round = index + 1;
-    const completed = round < currentRound || (state.currentMode !== 'focus' && round === currentRound);
-    const current = round === currentRound && state.currentMode === 'focus';
-    return `<span class="round-dot${completed ? ' is-complete' : ''}${current ? ' is-current' : ''}" aria-label="Round ${round}${completed ? ', complete' : current ? ', current' : ''}"></span>`;
-  }).join('');
-}
-function playTimerStartFeedback() {
-  // Starting a timer should change the room's lighting, not replay the whole
-  // hero card and make the focus model jump down and back up.
-  els.timerPage?.classList.remove('timer-starting');
 }
 function updateTodaySummary() {
   const today = dkey(new Date());
@@ -1585,30 +785,18 @@ function updateTodaySummary() {
   els.todayQuestions.textContent = questions;
   els.todaySessions.textContent = recs.length;
 
-  const dailyGoal = Math.max(state.focus, state.focus * state.roundsBeforeLong);
-  const progress = Math.min(100, Math.round((focus / dailyGoal) * 100));
-  if (els.dailyProgressBar) els.dailyProgressBar.style.width = `${progress}%`;
-  if (els.dailyProgressLabel) els.dailyProgressLabel.textContent = `${minutesToHuman(focus)} focused today`;
-  if (els.dailyHeadline && els.dailySubline) {
-    if (!focus) {
-      els.dailyHeadline.textContent = 'One focused round can change the day.';
-      els.dailySubline.textContent = 'Start small. Let the next 25 minutes belong to you.';
-    } else if (focus < state.focus) {
-      els.dailyHeadline.textContent = 'You have started the thread.';
-      els.dailySubline.textContent = `${questions} question${questions === 1 ? '' : 's'} answered so far. Keep the rhythm going.`;
-    } else if (focus < dailyGoal / 2) {
-      els.dailyHeadline.textContent = 'Nice rhythm. Keep building.';
-      els.dailySubline.textContent = `${questions} question${questions === 1 ? '' : 's'} solved today. Your consistency is showing.`;
-    } else {
-      els.dailyHeadline.textContent = 'You are in a strong groove.';
-      els.dailySubline.textContent = `${questions} question${questions === 1 ? '' : 's'} solved. That is real progress.`;
-    }
-  }
-
   const { bySubject, questionsBySubject } = bucketStats(recs);
   els.todayBreakdown.innerHTML = SUBJECTS.map(s => `
     <div class="mini-line"><span>${s}</span><strong>${minutesToHuman(bySubject[s] || 0)} · ${questionsBySubject[s] || 0} q</strong></div>
   `).join('');
+
+  const todayQuestions = questions;
+  const enayatUnlocked = todayQuestions >= 100;
+  state.achievements.enayat = enayatUnlocked;
+  els.achEnayat.classList.toggle('unlocked', enayatUnlocked);
+  els.achEnayat.classList.toggle('locked', !enayatUnlocked);
+  if (enayatUnlocked) els.achEnayat.textContent = "Enayat's Challenge";
+  else els.achEnayat.textContent = "Enayat's Challenge";
 
   state.streak = computeCurrentStreak(getRecords());
 }
@@ -1630,14 +818,13 @@ function addRecord({subject, questions, note, minutes, date}) {
   const previousRecords = recs.slice();
   recs.unshift(record);
   state.records = recs.slice(0, 1000);
-  state.recordsUpdatedAt = nextRecordsUpdatedAt();
   state.lastSubject = record.subject;
   currentSubject = record.subject;
   if (!saveState({ immediate: true, reason: 'record-added' })) {
     state.records = previousRecords;
     throw new Error('Storage unavailable');
   }
-  updateAchievements({ announce: true });
+  updateAchievements();
   if (state.page === 'analytics') renderAnalytics();
   void syncLeaderboardNow('record-added');
   void refreshLeaderboard();
@@ -1645,114 +832,48 @@ function addRecord({subject, questions, note, minutes, date}) {
 function getRecordsForDate(dateKey) {
   return getRecords().filter(r => r.date === dateKey);
 }
-function refreshCurrentAnalyticsDetail(dateKey) {
-  if (!currentAnalyticsDetail || currentAnalyticsDetail.date !== dateKey) return;
-  const sessions = getRecordsForDate(dateKey);
-  const stats = bucketStats(sessions);
-  currentAnalyticsDetail = {
-    ...currentAnalyticsDetail,
-    totalMinutes: stats.totalMinutes,
-    questions: stats.questions,
-    bySubject: stats.bySubject,
-    questionsBySubject: stats.questionsBySubject,
-    sessions
-  };
-}
-function deleteRecordById(recordId) {
-  const id = String(recordId || '');
-  const record = getRecords().find(item => item.id === id);
-  if (!record) return false;
-  const label = record.note ? `“${record.note}”` : `${record.subject} session`;
-  if (!confirm(`Delete this ${label}? This cannot be undone.`)) return false;
-
-  const previousState = {
-    records: state.records,
-    deletedRecordIds: state.deletedRecordIds,
-    recordsUpdatedAt: state.recordsUpdatedAt,
-    updatedAt: state.updatedAt,
-    streak: state.streak
-  };
-  const previousAnalyticsDetail = currentAnalyticsDetail;
-  const tombstones = { ...normalizeDeletedRecordIds(state.deletedRecordIds) };
-  tombstones[id] = Date.now();
-  state.deletedRecordIds = tombstones;
-  state.records = getRecords().filter(item => item.id !== id);
-  state.recordsUpdatedAt = nextRecordsUpdatedAt();
-  state.streak = computeCurrentStreak(state.records);
-  refreshCurrentAnalyticsDetail(record.date);
-  if (!saveState({ immediate: true, reason: 'record-deleted' })) {
-    state.records = previousState.records;
-    state.deletedRecordIds = previousState.deletedRecordIds;
-    state.recordsUpdatedAt = previousState.recordsUpdatedAt;
-    state.updatedAt = previousState.updatedAt;
-    state.streak = previousState.streak;
-    currentAnalyticsDetail = previousAnalyticsDetail;
-    return false;
-  }
-  updateAchievements();
-  void syncLeaderboardNow('record-deleted');
-  void refreshLeaderboard();
-  showToast('Session deleted');
-  return true;
-}
 function deleteRecordsForDate(dateKey) {
-  const toDelete = getRecords().filter(r => r.date === dateKey);
-  if (!toDelete.length) return false;
-  // Tombstone every deleted id so a sync from another device (or a stale
-  // queued snapshot on this one) can never silently bring these records
-  // back — see mergeRecordsUnion/mergeTombstones.
-  const previousState = {
-    records: state.records,
-    deletedRecordIds: state.deletedRecordIds,
-    recordsUpdatedAt: state.recordsUpdatedAt,
-    updatedAt: state.updatedAt,
-    streak: state.streak
-  };
-  const previousAnalyticsDetail = currentAnalyticsDetail;
-  const previousAnalyticsSession = currentAnalyticsSession;
-  const now = Date.now();
-  const tombstones = { ...normalizeDeletedRecordIds(state.deletedRecordIds) };
-  toDelete.forEach(r => { tombstones[r.id] = now; });
-  state.deletedRecordIds = tombstones;
-  state.records = getRecords().filter(r => r.date !== dateKey);
-  state.recordsUpdatedAt = nextRecordsUpdatedAt();
-  state.streak = computeCurrentStreak(state.records);
+  const nextRecords = getRecords().filter(r => r.date !== dateKey);
+  if (nextRecords.length === getRecords().length) return false;
+  state.records = nextRecords;
+  state.streak = computeCurrentStreak(nextRecords);
   if (currentAnalyticsDetail && currentAnalyticsDetail.date === dateKey) currentAnalyticsDetail = null;
   if (currentAnalyticsSession && currentAnalyticsSession.date === dateKey) currentAnalyticsSession = null;
-  if (!saveState({ immediate: true, reason: 'record-deleted' })) {
-    state.records = previousState.records;
-    state.deletedRecordIds = previousState.deletedRecordIds;
-    state.recordsUpdatedAt = previousState.recordsUpdatedAt;
-    state.updatedAt = previousState.updatedAt;
-    state.streak = previousState.streak;
-    currentAnalyticsDetail = previousAnalyticsDetail;
-    currentAnalyticsSession = previousAnalyticsSession;
-    return false;
-  }
+  saveState({ immediate: true, reason: 'record-deleted' });
   updateAchievements();
   void syncLeaderboardNow('record-deleted');
   void refreshLeaderboard();
   return true;
 }
+function updateAchievements() {
+  const recs = getRecords();
+  const today = dkey(new Date());
+  const todayRecs = recs.filter(r => r.date === today);
+  const todayQuestions = todayRecs.reduce((a, r) => a + (Number(r.questions) || 0), 0);
+  const enayatUnlocked = todayQuestions >= 100;
+  state.achievements.enayat = enayatUnlocked;
+  els.achEnayat.classList.toggle('unlocked', enayatUnlocked);
+  els.achEnayat.classList.toggle('locked', !enayatUnlocked);
+}
 function buildWeeklyBuckets() {
-  const datedRecords = getRecords()
-    .map(record => ({ record, date: parseDateKey(record.date) }))
-    .filter(item => !Number.isNaN(item.date.getTime()));
+  const recs = getRecords().filter(r => {
+    const d = parseDateKey(r.date);
+    return !Number.isNaN(d.getTime());
+  });
   const currentWeekStart = startOfWeek(startOfToday());
-  const dates = datedRecords.map(item => item.date).sort((a, b) => a - b);
+  const dates = recs.map(r => parseDateKey(r.date)).filter(d => !Number.isNaN(d.getTime())).sort((a, b) => a - b);
   const firstWeekStart = dates.length ? startOfWeek(dates[0]) : currentWeekStart;
   const today = startOfToday();
-  const weekCount = Math.max(1, Math.round((currentWeekStart - firstWeekStart) / (DAY_MS * 7)) + 1);
-  const recordsByWeek = Array.from({ length: weekCount }, () => []);
-  datedRecords.forEach(({ record, date }) => {
-    const index = Math.round((startOfWeek(date) - firstWeekStart) / (DAY_MS * 7));
-    if (index >= 0 && index < recordsByWeek.length) recordsByWeek[index].push(record);
-  });
+  const weekCount = Math.max(1, Math.floor((currentWeekStart - firstWeekStart) / (DAY_MS * 7)) + 1);
   const weeks = [];
   for (let i = 0; i < weekCount; i++) {
     const start = addDays(firstWeekStart, i * 7);
     const end = addDays(start, 6);
-    weeks.push({ label: formatDateRange(start, end), start, end, records: recordsByWeek[i], isCurrent: today >= start && today <= end });
+    const records = recs.filter(r => {
+      const d = parseDateKey(r.date);
+      return !Number.isNaN(d.getTime()) && d >= start && d <= end;
+    });
+    weeks.push({ label: formatDateRange(start, end), start, end, records, isCurrent: today >= start && today <= end });
   }
   return weeks;
 }
@@ -1771,26 +892,14 @@ function buildMonthBuckets() {
     records
   }];
 }
-function groupRecordsByDate(records) {
-  const grouped = new Map();
-  (Array.isArray(records) ? records : []).forEach(record => {
-    const key = String(record?.date || '');
-    if (!key) return;
-    const day = grouped.get(key);
-    if (day) day.push(record);
-    else grouped.set(key, [record]);
-  });
-  return grouped;
-}
 function makeDayRows(bucket) {
   const days = [];
   const start = new Date(bucket.start);
-  const recordsByDate = groupRecordsByDate(bucket.records);
   for (let i = 0; i < 7; i++) {
     const d = new Date(start);
     d.setDate(start.getDate() + i);
     const key = dkey(d);
-    const dayRecords = recordsByDate.get(key) || [];
+    const dayRecords = bucket.records.filter(r => r.date === key);
     const { totalMinutes, questions, bySubject, questionsBySubject } = bucketStats(dayRecords);
     days.push({
       key,
@@ -1809,27 +918,10 @@ function makeMonthRows(bucket) {
   const monthEnd = bucket.end instanceof Date ? bucket.end : endOfMonth();
   const monthStart = bucket.start instanceof Date ? bucket.start : startOfMonth();
   const monthDays = monthEnd.getDate();
-  const recordsByDate = groupRecordsByDate(bucket.records);
-  // Calendar columns run Monday → Sunday so the first day lands under the
-  // correct weekday instead of creating a misleading left-aligned timeline.
-  const useDesktopCalendar = window.matchMedia?.('(min-width: 901px)').matches;
-  const leadingOffset = useDesktopCalendar ? (monthStart.getDay() + 6) % 7 : 0;
-  for (let index = 0; index < leadingOffset; index++) {
-    rows.push({
-      key: `placeholder-${monthStart.getFullYear()}-${monthStart.getMonth()}-${index}`,
-      placeholder: true,
-      short: '',
-      label: '',
-      totalMinutes: 0,
-      questions: 0,
-      bySubject: {},
-      questionsBySubject: {}
-    });
-  }
   for (let day = 1; day <= monthDays; day++) {
     const d = new Date(monthStart.getFullYear(), monthStart.getMonth(), day);
     const key = dkey(d);
-    const dayRecords = recordsByDate.get(key) || [];
+    const dayRecords = bucket.records.filter(r => r.date === key);
     const { totalMinutes, questions, bySubject, questionsBySubject } = bucketStats(dayRecords);
     rows.push({
       key,
@@ -1843,54 +935,29 @@ function makeMonthRows(bucket) {
   }
   return rows;
 }
-function renderSessionLogButton() {
-  if (!els.logBtn) return;
-  const hasFocusProgress = state.currentMode === 'focus'
-    && (state.running || state.pendingSession || Number(state.remaining) < Number(state.total));
-  const logAllowed = Boolean(state.pendingSession || hasFocusProgress);
-  els.logBtn.disabled = !logAllowed;
-  els.logBtn.style.opacity = logAllowed ? '' : '0.38';
-  els.logBtn.title = logAllowed ? '' : 'Start the focus timer before logging a session';
-  els.logBtn.textContent = state.running && !state.pendingSession ? '✏️ Log & Pause' : '✏️ Log Session';
-}
 function render(options = {}) {
   const running = state.running;
-  updateTimerVisualState();
-  renderRoundTracker();
   els.timer.textContent = fmt(state.remaining);
   els.modeLabel.textContent = modeName(state.currentMode);
   els.sessionMini.textContent = state.currentMode === 'focus'
-    ? (state.noBreakMode ? `Cycle ${state.cycleCount}` : `Round ${state.cycleCount} of ${state.roundsBeforeLong}`)
+    ? `Round ${state.cycleCount} of ${state.roundsBeforeLong}`
     : modeName(state.currentMode);
   els.startPauseBtn.textContent = running ? 'Pause' : 'Start';
-  renderSessionLogButton();
   els.statusPill.textContent = running ? 'Locked in' : (
     state.pendingSession ? 'Log session' :
-    (state.noBreakMode && state.currentMode === 'focus' ? 'Continuous study' :
-      (state.currentMode !== 'focus' && state.remaining === state.total ? 'Break ready' :
-        (state.remaining === state.total ? 'Ready to lock in' : 'Paused')))
+    (state.currentMode !== 'focus' && state.remaining === state.total ? 'Break ready' :
+      (state.remaining === state.total ? 'Ready to lock in' : 'Paused'))
   );
   const pct = 1 - (state.remaining / state.total || 1);
   els.progressRing.style.strokeDashoffset = String(CIRC * (1 - clamp(pct, 0, 1)));
-  positionComet(clamp(pct, 0, 1));
-  document.body.style.boxShadow = state.pulse ? 'inset 0 0 100px var(--focus-breath, rgba(92, 142, 94, .10))' : 'none';
+  document.body.style.boxShadow = state.pulse ? 'inset 0 0 100px rgba(124,58,237,0.08)' : 'none';
 
   updateTodaySummary();
-  // Re-derive daily achievements on every full render so a midnight rollover
-  // or a newer cloud snapshot cannot leave yesterday's badge visible.
-  updateAchievements({ announce: false });
   updateStats();
   renderTimerOnly();
   if (state.page === 'analytics') renderAnalytics();
-  else if (state.page === 'other') {
-    renderOtherView();
-    renderSettings();
-    renderAchievements();
-  }
-  else if (state.page === 'leaderboard') renderLeaderboard();
-  updateProfileLabels();
-  renderTodoList();
-  if (!options.skipSave) saveState();
+  else renderAchievements();
+  if (!options.skipSave) saveState({ skipCloudSync: true, touchUpdatedAt: false, reason: 'render' });
 }
 function requestWakeLock() {
   return (async () => {
@@ -1927,52 +994,6 @@ function saveTimerCheckpoint() {
   }
 }
 
-function advanceNoBreakTimerFromCheckpoint(elapsedWall) {
-  const checkpoint = state.timerCheckpoint;
-  if (!checkpoint || state.currentMode !== 'focus') return false;
-
-  const total = Math.max(1, Number(checkpoint.total) || state.total || secondsForMode('focus'));
-  let cycleCount = Math.max(1, Number.parseInt(checkpoint.cycleCount, 10) || state.cycleCount || 1);
-  let remaining = Math.max(0, Number(checkpoint.remaining) || state.remaining || total);
-  let elapsed = Math.max(0, Math.floor(Number(elapsedWall) || 0));
-
-  // If the timer hit 00:00 before the checkpoint was saved, advance into the
-  // next continuous focus block immediately. In no-break mode there is no
-  // break screen to land on, so the next cycle should start automatically.
-  if (remaining <= 0) {
-    cycleCount += 1;
-    remaining = total;
-  }
-
-  if (elapsed > 0) {
-    if (elapsed >= remaining) {
-      elapsed -= remaining;
-      cycleCount += 1;
-      const extraCycles = Math.floor(elapsed / total);
-      cycleCount += extraCycles;
-      elapsed %= total;
-      remaining = total - elapsed;
-      if (remaining <= 0 || remaining > total) remaining = total;
-    } else {
-      remaining -= elapsed;
-    }
-  }
-
-  state.currentMode = 'focus';
-  state.cycleCount = cycleCount;
-  state.total = total;
-  state.remaining = remaining;
-  checkpoint.wallClock = Date.now();
-  checkpoint.mode = 'focus';
-  checkpoint.total = total;
-  checkpoint.remaining = remaining;
-  checkpoint.cycleCount = cycleCount;
-
-  timerPerfStamp = performance.now();
-  if (!interval) interval = setInterval(tick, 1000);
-  return true;
-}
-
 function restoreTimerFromCheckpoint() {
   if (!state.running) return false;
   if (!state.timerCheckpoint || typeof state.timerCheckpoint.wallClock !== 'number') {
@@ -1985,12 +1006,6 @@ function restoreTimerFromCheckpoint() {
   state.cycleCount = state.timerCheckpoint.cycleCount || state.cycleCount;
   state.total = Math.max(1, Number(state.timerCheckpoint.total) || state.total);
   const elapsedWall = Math.floor((Date.now() - state.timerCheckpoint.wallClock) / 1000);
-
-  if (state.noBreakMode && state.timerCheckpoint.mode === 'focus') {
-    advanceNoBreakTimerFromCheckpoint(elapsedWall);
-    return true;
-  }
-
   if (elapsedWall > 0) {
     state.remaining = Math.max(0, (Number(state.timerCheckpoint.remaining) || state.remaining) - elapsedWall);
     state.timerCheckpoint.wallClock = Date.now();
@@ -2007,9 +1022,7 @@ function restoreTimerFromCheckpoint() {
     completeTimerCycle();
     return true;
   }
-  // Return true — a checkpoint was found and applied. Callers can skip
-  // redundant interval setup; the interval is already running above.
-  return true;
+  return false;
 }
 
 function completeTimerCycle() {
@@ -2020,40 +1033,16 @@ function completeTimerCycle() {
   state.running = false;
   timerPerfStamp = 0;
   state.timerCheckpoint = null;
-
-  if (finishedMode === 'focus' && state.noBreakMode) {
-    state.cycleCount = Math.max(1, Number(state.cycleCount) || 1) + 1;
-    state.currentMode = 'focus';
-    state.total = secondsForMode('focus');
-    state.remaining = state.total;
-    state.running = true;
-    timerPerfStamp = performance.now();
-    requestWakeLock();
-    interval = setInterval(tick, 1000);
-    saveState({ immediate: true, reason: 'no-break-cycle' });
-    render({ skipSave: true });
-    return;
-  }
-
   releaseWakeLock();
 
   if (finishedMode === 'focus') {
     const completedRound = state.cycleCount;
-    const nextMode = nextBreakModeForRound(completedRound);
-    state.pendingSession = createPendingSession({
+    state.pendingSession = {
       minutes: state.focus,
-      nextMode,
+      nextMode: nextBreakModeForRound(completedRound),
       sessionDate: dkey(new Date()),
-      roundCompleted: completedRound,
-      wasNoBreak: false,
-      restoreState: {
-        currentMode: nextMode,
-        remaining: secondsForMode(nextMode),
-        total: secondsForMode(nextMode),
-        cycleCount: completedRound,
-        running: false
-      }
-    });
+      roundCompleted: completedRound
+    };
     state.currentMode = state.pendingSession.nextMode;
     state.total = secondsForMode(state.currentMode);
     state.remaining = state.total;
@@ -2064,128 +1053,31 @@ function completeTimerCycle() {
     state.currentMode = 'focus';
     state.remaining = secondsForMode('focus');
     state.total = state.remaining;
+    releaseWakeLock();
     render();
     saveState();
     if (state.autoStart) setTimeout(() => startTimer(), 450);
   }
 }
-function playSound(soundType, options = {}) {
-  if (!state.sound || state.soundVolume <= 0) return;
-  void ensureSoundEngine().then(mod => {
-    if (!mod?.playCue) return;
-    return mod.playCue(soundType, {
-      ...options,
-      theme: options.theme || state.theme || 'nebula',
-      volume: state.soundVolume
-    });
-  });
+function beep(freq = 880, duration = 0.14) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = freq;
+    osc.type = 'sine';
+    gain.gain.value = 0.0001;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc.start(now);
+    osc.stop(now + duration + 0.05);
+  } catch {}
 }
-
-function ensureThemeCrossfadeLayer() {
-  let layer = document.querySelector('.theme-crossfade-layer');
-  if (layer) return layer;
-  layer = document.createElement('div');
-  layer.className = 'theme-crossfade-layer';
-  layer.setAttribute('aria-hidden', 'true');
-  document.body.appendChild(layer);
-  return layer;
-}
-
-function applyTheme(theme) {
-  const valid = ['nebula', 'ocean', 'ember', 'aurora'];
-  // Aurora is a mobile-only theme: its minimalist styling lives entirely in the
-  // mobile stylesheets and is not designed for the desktop layout. If it is
-  // requested on a desktop viewport, quietly fall back to the default theme so
-  // the app never ends up on an unstyled surface.
-  const requestedTheme = valid.includes(theme) ? theme : 'nebula';
-  let requested = requestedTheme;
-  if (requested === 'aurora' && window.matchMedia?.('(min-width: 901px)').matches) {
-    requested = 'nebula';
-    // Defer the toast so it can fire even when this runs during early startup.
-    window.setTimeout(() => showToast('Bloom is mobile-only — switched to Grove.'), 0);
-  }
-  const desktop = isDesktopViewport();
-  const t = requestedTheme === 'aurora' && desktop ? 'nebula' : requestedTheme;
-  const current = valid.find(name => document.body.classList.contains(`theme-${name}`)) || '';
-  const themeTextures = {
-    nebula: 'assets/textures/grove-immersive.png',
-    ocean:  'assets/textures/lagoon-immersive.png',
-    ember:  'assets/textures/hearth-immersive.png',
-    aurora: 'assets/textures/grove-immersive.png'
-  };
-  const canCrossfade = current && current !== t
-    && themeTextures[current]
-    && window.matchMedia?.('(min-width: 901px)').matches
-    && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-
-  if (canCrossfade) {
-    const layer = ensureThemeCrossfadeLayer();
-    layer.style.backgroundImage = `url("${themeTextures[current]}")`;
-    layer.classList.remove('is-active');
-    // Force a clean starting state if themes are switched in quick succession.
-    void layer.offsetWidth;
-    layer.classList.add('is-active');
-    document.body.classList.add('theme-transitioning');
-    window.setTimeout(() => {
-      layer.classList.remove('is-active');
-      document.body.classList.remove('theme-transitioning');
-    }, 980);
-  }
-
-  document.body.classList.remove('theme-nebula', 'theme-ocean', 'theme-ember', 'theme-aurora');
-  document.body.classList.add(`theme-${t}`);
-  document.body.dataset.effectiveTheme = t;
-  document.body.dataset.requestedTheme = requestedTheme;
-  const themeMeta = document.querySelector('meta[name="theme-color"]');
-  if (themeMeta) {
-    themeMeta.content = {
-      nebula: '#07130f',
-      ocean: '#071b22',
-      ember: '#21100c',
-      aurora: '#fff3b8'
-    }[t];
-  }
-  state.theme = requestedTheme;
-  // Sync active state on all theme cards (settings page may not be open yet)
-  document.querySelectorAll('.theme-card[data-theme]').forEach(card => {
-    card.classList.toggle('active', card.dataset.theme === requestedTheme);
-    card.setAttribute('aria-pressed', String(card.dataset.theme === requestedTheme));
-  });
-  renderSettingsView();
-}
-
-function setupDesktopParallax() {
-  const hero = document.querySelector('#timerPage .hero');
-  if (!hero || !window.matchMedia?.('(hover: hover) and (pointer: fine)').matches) return;
-  let frame = 0;
-  const reset = () => {
-    hero.style.setProperty('--parallax-x', '0px');
-    hero.style.setProperty('--parallax-y', '0px');
-  };
-  hero.addEventListener('pointermove', (event) => {
-    if (!isDesktopViewport() || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-      reset();
-      return;
-    }
-    const rect = hero.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / Math.max(rect.width, 1) - .5) * 8;
-    const y = ((event.clientY - rect.top) / Math.max(rect.height, 1) - .5) * 6;
-    if (frame) window.cancelAnimationFrame(frame);
-    frame = window.requestAnimationFrame(() => {
-      hero.style.setProperty('--parallax-x', `${x.toFixed(2)}px`);
-      hero.style.setProperty('--parallax-y', `${y.toFixed(2)}px`);
-      frame = 0;
-    });
-  }, { passive: true });
-  hero.addEventListener('pointerleave', () => {
-    if (frame) window.cancelAnimationFrame(frame);
-    frame = 0;
-    reset();
-  });
-}
-
 function celebrate(mode) {
-  playSound('timerComplete', { mode });
+  if (state.sound) beep(mode === 'focus' ? 880 : 660, 0.18);
   if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification(mode === 'focus' ? 'Focus complete' : 'Break over', {
@@ -2195,17 +1087,12 @@ function celebrate(mode) {
 }
 function startTimer() {
   if (state.running || state.pendingSession) return;
-  primeSoundEngine();
   clearInterval(interval);
   state.running = true;
-  playSound('start');
-  updateTimerVisualState();
-  playTimerStartFeedback();
   timerPerfStamp = performance.now();
   saveTimerCheckpoint();
   els.statusPill.textContent = 'Locked in';
   els.startPauseBtn.textContent = 'Pause';
-  renderSessionLogButton();
   tick();
   interval = setInterval(tick, 1000);
   requestWakeLock();
@@ -2213,7 +1100,6 @@ function startTimer() {
 }
 function pauseTimer() {
   state.running = false;
-  playSound('pause');
   timerPerfStamp = 0;
   state.timerCheckpoint = null;
   clearInterval(interval);
@@ -2223,7 +1109,6 @@ function pauseTimer() {
   render();
 }
 function openSessionModal() {
-  setScrollLock(true);
   els.sessionModal.classList.remove('hidden');
   els.sessionModal.setAttribute('aria-hidden', 'false');
   els.questionInput.value = '';
@@ -2234,44 +1119,11 @@ function openSessionModal() {
     btn.classList.toggle('active', active);
     btn.setAttribute('aria-pressed', String(active));
   });
-  if (els.sessionModalDescription) {
-    els.sessionModalDescription.textContent = state.noBreakMode
-      ? 'Pick a subject and enter the questions solved for this continuous study block.'
-      : 'Pick a subject and enter the questions solved.';
-  }
-  if (els.sessionDuration) {
-    const duration = state.pendingSession && Number(state.pendingSession.minutes) > 0
-      ? Number(state.pendingSession.minutes)
-      : (state.noBreakMode ? getContinuousSessionMinutes() : state.focus);
-    els.sessionDuration.textContent = minutesToHuman(Math.max(1, Math.round(duration)));
-  }
   els.questionInput.focus();
 }
 function closeSessionModal() {
-  setScrollLock(false);
   els.sessionModal.classList.add('hidden');
   els.sessionModal.setAttribute('aria-hidden', 'true');
-}
-function getCurrentFocusProgressMinutes() {
-  if (state.currentMode !== 'focus') return 0;
-  const liveRemaining = state.running && state.timerCheckpoint && Number.isFinite(Number(state.timerCheckpoint.remaining))
-    ? Math.max(0, Number(state.timerCheckpoint.remaining) || 0)
-    : Math.max(0, Number(state.remaining) || 0);
-  const total = Math.max(1, Number(state.total) || secondsForMode('focus'));
-  const elapsedSeconds = Math.max(0, total - liveRemaining);
-  return elapsedSeconds > 0 ? Math.max(1, Math.ceil(elapsedSeconds / 60)) : 0;
-}
-
-function getContinuousSessionMinutes() {
-  const focusSeconds = Math.max(60, secondsForMode('focus'));
-  const checkpointRemaining = state.running && state.timerCheckpoint && Number.isFinite(Number(state.timerCheckpoint.remaining))
-    ? Math.max(0, Number(state.timerCheckpoint.remaining) || 0)
-    : Math.max(0, Number(state.remaining) || 0);
-  const completedCycles = Math.max(0, Math.round(Number(state.cycleCount) || 1) - 1);
-  const currentSeconds = state.currentMode === 'focus'
-    ? Math.max(0, focusSeconds - checkpointRemaining)
-    : 0;
-  return Math.max(1, Math.round((completedCycles * focusSeconds + currentSeconds) / 60));
 }
 function savePendingSession() {
   if (!state.pendingSession || savingSession) return;
@@ -2280,22 +1132,19 @@ function savePendingSession() {
   const questions = Math.max(0, Number.parseInt(els.questionInput.value, 10) || 0);
   const note = els.noteInput.value || '';
   const subject = currentSubject || 'Physics';
-  const isContinuous = Boolean(state.pendingSession.wasNoBreak);
   let saved = false;
 
   try {
     const completedRound = state.pendingSession.roundCompleted || state.cycleCount;
-    const recordedMinutes = Math.max(1, Number(state.pendingSession.minutes) || state.focus);
     addRecord({
       subject,
       questions,
       note,
-      minutes: recordedMinutes,
+      minutes: state.pendingSession.minutes || state.focus,
       date: state.pendingSession.sessionDate || dkey(new Date())
     });
-    if (!isContinuous) advanceCycleAfterFocus(completedRound);
+    advanceCycleAfterFocus(completedRound);
     saved = true;
-    playSound('save');
     showToast(subject === 'Physics' ? 'Physics logged' : `${subject} saved`);
   } catch (err) {
     console.error('Save failed:', err);
@@ -2303,41 +1152,30 @@ function savePendingSession() {
   } finally {
     savingSession = false;
     els.saveLogBtn.disabled = false;
-  }
-
-  if (saved) {
-    state.pendingSession = null;
-    closeSessionModal();
-    state.lastSubject = subject;
-    state.currentMode = 'focus';
-    state.total = secondsForMode('focus');
-    state.remaining = state.total;
-    state.running = false;
-    timerPerfStamp = 0;
-    state.timerCheckpoint = null;
-    clearInterval(interval);
-    interval = null;
-    releaseWakeLock();
-    if (isContinuous) {
-      state.cycleCount = 1;
-      state.currentMode = 'focus';
-      state.remaining = secondsForMode('focus');
-      state.total = state.remaining;
+    if (saved) {
+      const nextMode = state.pendingSession.nextMode || 'short';
+      state.pendingSession = null;
+      closeSessionModal();
+      state.currentMode = nextMode;
+      state.total = secondsForMode(nextMode);
+      state.remaining = state.total;
+      state.lastSubject = subject;
+      state.running = false;
+      timerPerfStamp = 0;
+      state.timerCheckpoint = null;
+      clearInterval(interval);
+      interval = null;
+      saveState({ immediate: true, reason: 'session-saved' });
+      render();
+      void syncLeaderboardNow('session-saved');
+      void refreshLeaderboard();
+      if (state.autoStart) setTimeout(() => startTimer(), 300);
+      else els.statusPill.textContent = 'Break ready';
     }
-    saveState({ immediate: true, reason: 'session-saved' });
-    render();
-    void syncLeaderboardNow('session-saved');
-    void refreshLeaderboard();
-    if (!isContinuous && state.autoStart) setTimeout(() => startTimer(), 300);
-    else if (!isContinuous) els.statusPill.textContent = 'Break ready';
   }
 }
 function dismissSessionModal() {
-  if (state.pendingSession) {
-    restorePendingSessionState();
-  } else {
-    closeSessionModal();
-  }
+  closeSessionModal();
   render();
 }
 function getAnalyticsIndex(view, bucketCount) {
@@ -2355,10 +1193,10 @@ function setAnalyticsIndex(view, index) {
   state.analyticsSelections[view] = index;
 }
 
-function renderAnalyticsDetailLegacy(detail, view) {
+function renderAnalyticsDetail(detail, view) {
   if (!els.analyticsDetail) return;
   if (!detail) {
-    els.analyticsDetail.innerHTML = '<div><strong>Tap a bar to inspect it.</strong></div><div class="muted">You will see hours, questions, subject split, notes, and sessions here.</div>';
+    els.analyticsDetail.innerHTML = '<div><strong>Tap a bar to inspect it.</strong></div><div class="muted">You will see hours, questions, and subject split here.</div>';
     return;
   }
   const split = SUBJECTS.map(s => {
@@ -2367,81 +1205,22 @@ function renderAnalyticsDetailLegacy(detail, view) {
   }).join('');
   const period = detail.kind || 'Day';
   const extra = detail.range ? ` - ${detail.range}` : '';
-  const hasSessionDetail = Array.isArray(detail.sessions);
-  const sessions = hasSessionDetail ? detail.sessions : [];
-  const sessionsMarkup = sessions.length ? sessions.map(record => `
-    <article class="analytics-inline-session">
-      <div class="analytics-inline-session-main">
-        <div class="analytics-inline-session-top">
-          <span class="subject-pill ${subjectColorClass(record.subject)}">${escapeHtml(record.subject)}</span>
-          <strong>${minutesToHuman(record.minutes)}</strong>
-        </div>
-        <div class="analytics-inline-session-meta">${escapeHtml(record.at || 'Logged session')} · ${record.questions || 0} questions</div>
-        <div class="analytics-inline-session-note ${record.note ? '' : 'empty'}">${record.note ? `“${escapeHtml(record.note)}”` : 'No note added'}</div>
-      </div>
-      <button class="icon-btn small session-delete-btn" data-delete-record-id="${escapeHtml(record.id)}" aria-label="Delete ${escapeHtml(record.subject)} session">🗑</button>
-    </article>
-  `).join('') : '<div class="analytics-empty-sessions">No sessions recorded for this day.</div>';
-
   els.analyticsDetail.innerHTML = `
-    <div class="analytics-detail-heading"><div><strong>${period}: ${escapeHtml(detail.label)}${escapeHtml(extra)}</strong><div class="muted">${minutesToHuman(detail.totalMinutes)} · ${detail.questions} questions${hasSessionDetail ? ` · ${sessions.length} session${sessions.length === 1 ? '' : 's'}` : ''}</div></div><span class="analytics-detail-hint">${hasSessionDetail ? 'Tap a session to manage it' : 'Select a day for the session log'}</span></div>
-    <div class="detail-split">${split}</div>
-    ${hasSessionDetail ? (sessions.length ? `<div class="analytics-session-list-inline"><div class="analytics-session-list-title">Session log</div>${sessionsMarkup}</div>` : sessionsMarkup) : ''}
-  `;
-  els.analyticsDetail.querySelectorAll('[data-delete-record-id]').forEach(button => {
-    button.addEventListener('click', (event) => {
-      event.stopPropagation();
-      if (deleteRecordById(button.dataset.deleteRecordId)) {
-        currentAnalyticsSession = null;
-        render();
-      }
-    });
-  });
-}
-
-function renderAnalyticsDetail(detail, view) {
-  if (!els.analyticsDetail) return;
-  if (!detail) {
-    els.analyticsDetail.innerHTML = '<div><strong>Select a day for the session log.</strong></div><div class="muted">The chart stays focused; session notes and controls open only when you need them.</div>';
-    return;
-  }
-
-  const split = SUBJECTS.map(subject => {
-    const subjectQuestions = detail.questionsBySubject?.[subject] || 0;
-    return `<div class="mini-line"><span>${subject}</span><strong>${minutesToHuman(detail.bySubject?.[subject] || 0)} · ${subjectQuestions} q</strong></div>`;
-  }).join('');
-  const period = detail.kind || 'Day';
-  const extra = detail.range ? ` - ${detail.range}` : '';
-  const sessions = Array.isArray(detail.sessions) ? detail.sessions : null;
-  const sessionCount = sessions?.length || 0;
-  const action = sessions
-    ? `<button class="soft analytics-manage-btn" data-open-selected-day>${sessionCount ? `View ${sessionCount} session${sessionCount === 1 ? '' : 's'}` : 'Manage day'}</button>`
-    : '<span class="analytics-detail-hint">Select a day for sessions</span>';
-
-  els.analyticsDetail.innerHTML = `
-    <div class="analytics-detail-heading"><div><strong>${period}: ${escapeHtml(detail.label)}${escapeHtml(extra)}</strong><div class="muted">${minutesToHuman(detail.totalMinutes)} · ${detail.questions} questions${sessions ? ` · ${sessionCount} session${sessionCount === 1 ? '' : 's'}` : ''}</div></div>${action}</div>
+    <div><strong>${period}: ${detail.label}${extra}</strong></div>
+    <div class="muted">${minutesToHuman(detail.totalMinutes)} - ${detail.questions} questions</div>
     <div class="detail-split">${split}</div>
   `;
-  els.analyticsDetail.querySelector('[data-open-selected-day]')?.addEventListener('click', openCurrentAnalyticsDetailModal);
-}
-
-function openCurrentAnalyticsDetailModal() {
-  if (!currentAnalyticsDetail || currentAnalyticsRowsView !== currentAnalyticsDetail.view) return;
-  const row = currentAnalyticsRows[currentAnalyticsDetail.index];
-  if (row) openAnalyticsSessionModal(row);
 }
 
 function setAnalyticsDetailFromClick(view, index) {
-  const rows = currentAnalyticsRowsView === view && currentAnalyticsRows.length
-    ? currentAnalyticsRows
-    : (() => {
-        const buckets = view === 'monthly' ? buildMonthBuckets() : buildWeeklyBuckets();
-        const selectedIndex = getAnalyticsIndex(view, buckets.length);
-        const selected = buckets[selectedIndex] || buckets[buckets.length - 1];
-        return selected ? (view === 'weekly' ? makeDayRows(selected) : makeMonthRows(selected)) : [];
-      })();
+  const buckets = view === 'monthly' ? buildMonthBuckets() : buildWeeklyBuckets();
+  const selectedIndex = getAnalyticsIndex(view, buckets.length);
+  const selected = buckets[selectedIndex] || buckets[buckets.length - 1];
+  if (!selected) return;
+
+  const rows = view === 'weekly' ? makeDayRows(selected) : makeMonthRows(selected);
   const row = rows[index];
-  if (!row || row.placeholder) return;
+  if (!row) return;
 
   currentAnalyticsDetail = {
     view,
@@ -2453,17 +1232,11 @@ function setAnalyticsDetailFromClick(view, index) {
     questions: row.questions,
     bySubject: row.bySubject,
     questionsBySubject: row.questionsBySubject,
-    sessions: getRecordsForDate(row.key),
     range: row.range || ''
   };
 
-  els.graphArea.querySelectorAll('.day-col.selected, .bar.selected').forEach(node => node.classList.remove('selected'));
-  const selectedNode = els.graphArea.querySelector(`[data-chart-view="${view}"][data-chart-index="${index}"]`);
-  if (selectedNode) {
-    selectedNode.classList.add('selected');
-    selectedNode.querySelector('.bar')?.classList.add('selected');
-  }
-  renderAnalyticsDetail(currentAnalyticsDetail, view);
+  renderAnalytics();
+  openAnalyticsSessionModal(row);
 }
 
 function openAnalyticsSessionModal(row) {
@@ -2476,12 +1249,6 @@ function openAnalyticsSessionModal(row) {
     questions: row.questions,
     sessions
   };
-  if (els.analyticsSessionModal) {
-    // Session detail belongs to the active visual theme. Subject colour is
-    // still shown by the pills and chart, but must not tint the modal shell
-    // or make it look blue/green after a theme change.
-    els.analyticsSessionModal.style.setProperty('--session-accent', 'var(--accent)');
-  }
   if (els.analyticsSessionDate) els.analyticsSessionDate.textContent = row.label;
   if (els.analyticsSessionTime) els.analyticsSessionTime.textContent = minutesToHuman(row.totalMinutes);
   if (els.analyticsSessionQuestions) els.analyticsSessionQuestions.textContent = String(row.questions);
@@ -2492,31 +1259,7 @@ function openAnalyticsSessionModal(row) {
       <div class="mini-line"><span>${subject}</span><strong>${subjectStats.questionsBySubject[subject] || 0} q</strong></div>
     `).join('');
   }
-  if (els.analyticsSessionList) {
-    els.analyticsSessionList.innerHTML = sessions.length ? sessions.map(record => `
-      <article class="analytics-session-row">
-        <div class="analytics-session-row-main">
-          <div class="analytics-session-row-head">
-            <span class="subject-pill ${subjectColorClass(record.subject)}">${escapeHtml(record.subject)}</span>
-            <strong>${minutesToHuman(record.minutes)}</strong>
-          </div>
-          <div class="analytics-session-row-meta">${escapeHtml(record.at || 'Logged session')} · ${record.questions || 0} questions</div>
-          <div class="analytics-session-note ${record.note ? '' : 'empty'}">${record.note ? `“${escapeHtml(record.note)}”` : 'No note added for this session'}</div>
-        </div>
-        <button class="soft danger session-delete-btn" data-delete-record-id="${escapeHtml(record.id)}">Delete</button>
-      </article>
-    `).join('') : '<div class="analytics-empty-sessions">No sessions recorded for this day.</div>';
-    els.analyticsSessionList.querySelectorAll('[data-delete-record-id]').forEach(button => {
-      button.addEventListener('click', () => {
-        if (!deleteRecordById(button.dataset.deleteRecordId)) return;
-        currentAnalyticsSession = null;
-        closeAnalyticsSessionModal();
-        render();
-      });
-    });
-  }
   if (els.analyticsSessionModal) {
-    setScrollLock(true);
     els.analyticsSessionModal.classList.remove('hidden');
     els.analyticsSessionModal.setAttribute('aria-hidden', 'false');
   }
@@ -2524,7 +1267,6 @@ function openAnalyticsSessionModal(row) {
 
 function closeAnalyticsSessionModal() {
   if (!els.analyticsSessionModal) return;
-  setScrollLock(false);
   els.analyticsSessionModal.classList.add('hidden');
   els.analyticsSessionModal.setAttribute('aria-hidden', 'true');
 }
@@ -2547,99 +1289,23 @@ function handleAnalyticsSessionDelete() {
   currentAnalyticsSession = null;
   render();
 }
-
-function isDesktopViewport() {
-  return Boolean(window.matchMedia?.('(min-width: 901px)').matches);
-}
-
-function setAnalyticsPeriod(index) {
-  const view = state.analyticsView === 'monthly' ? 'monthly' : 'weekly';
-  const buckets = view === 'weekly' ? buildWeeklyBuckets() : buildMonthBuckets();
-  if (!buckets.length) return;
-  setAnalyticsIndex(view, clamp(Number(index) || 0, 0, buckets.length - 1));
-  saveState();
-  currentAnalyticsDetail = null;
-  renderAnalytics();
-}
-
-function shiftAnalyticsPeriod(delta) {
-  const view = state.analyticsView === 'monthly' ? 'monthly' : 'weekly';
-  const buckets = view === 'weekly' ? buildWeeklyBuckets() : buildMonthBuckets();
-  if (!buckets.length) return;
-  setAnalyticsPeriod(getAnalyticsIndex(view, buckets.length) + delta);
-}
-
-function syncAnalyticsDesktopControls(view, buckets, currentIndex) {
-  const desktop = isDesktopViewport();
-  const auroraMobile = state.theme === 'aurora' && !desktop;
-  const showAuroraPeriodNav = auroraMobile && view === 'weekly';
-  [els.periodPrevBtn, els.periodNextBtn].forEach(button => {
-    if (button) button.hidden = !(desktop || showAuroraPeriodNav);
-  });
-  [els.periodTodayBtn, els.analyticsRecentSessionsBtn].forEach(button => {
-    if (button) button.hidden = !desktop;
-  });
-  if (!desktop && !auroraMobile) return;
-
-  if (els.periodPrevBtn) els.periodPrevBtn.disabled = currentIndex <= 0;
-  if (els.periodNextBtn) els.periodNextBtn.disabled = currentIndex >= buckets.length - 1;
-  if (els.periodTodayBtn) {
-    els.periodTodayBtn.disabled = view === 'monthly' || currentIndex >= buckets.length - 1;
-    els.periodTodayBtn.setAttribute('aria-label', view === 'monthly' ? 'Current month selected' : 'Jump to the current week');
-  }
-}
-
-function openRecentAnalyticsSessionModal() {
-  const today = new Date();
-  const key = dkey(today);
-  const sessions = getRecordsForDate(key);
-  const stats = bucketStats(sessions);
-  openAnalyticsSessionModal({
-    key,
-    label: today.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }),
-    totalMinutes: stats.totalMinutes,
-    questions: stats.questions,
-    bySubject: stats.bySubject,
-    questionsBySubject: stats.questionsBySubject
-  });
-}
-
 function renderPeriodButtons() {
   const view = state.analyticsView === 'monthly' ? 'monthly' : 'weekly';
   const buckets = view === 'weekly' ? buildWeeklyBuckets() : buildMonthBuckets();
-  const auroraMobile = state.theme === 'aurora' && !isDesktopViewport();
-  if (!els.periodChips) return;
-  if (!buckets.length) {
-    els.periodChips.innerHTML = '';
-    syncAnalyticsDesktopControls(view, [], 0);
+  if (!buckets.length) return;
+  if (view === 'monthly') {
+    els.periodChips.innerHTML = `<button class="chip active" data-period="0">This Month</button>`;
     return;
   }
   const currentIndex = getAnalyticsIndex(view, buckets.length);
   setAnalyticsIndex(view, currentIndex);
-  if (view === 'monthly') {
-    els.periodChips.innerHTML = `<button class="chip active" data-period="0">This Month</button>`;
-  } else if (auroraMobile) {
-    // Aurora keeps the period rail calm on small screens: the selected week
-    // stays in one readable pill while the adjacent buttons move through the
-    // full history. This avoids a crowded row when many weeks exist.
-    const selectedLabel = buckets[currentIndex]?.label || 'This week';
-    els.periodChips.innerHTML = `<button class="chip active" data-period="${currentIndex}">${selectedLabel}</button>`;
-  } else {
-    els.periodChips.innerHTML = buckets.map((b, idx) => `<button class="chip ${idx === currentIndex ? 'active' : ''}" data-period="${idx}">${b.label}</button>`).join('');
-  }
+  els.periodChips.innerHTML = buckets.map((b, idx) => `<button class="chip ${idx === currentIndex ? 'active' : ''}" data-period="${idx}">${b.label}</button>`).join('');
   els.periodChips.querySelectorAll('[data-period]').forEach(btn => btn.addEventListener('click', () => {
-    setAnalyticsPeriod(Number(btn.dataset.period));
+    setAnalyticsIndex(view, Number(btn.dataset.period));
+    saveState();
+    currentAnalyticsDetail = null;
+    renderAnalytics();
   }));
-  syncAnalyticsDesktopControls(view, buckets, currentIndex);
-
-  if (isDesktopViewport() || view === 'weekly') {
-    window.requestAnimationFrame(() => {
-      const active = els.periodChips.querySelector('.chip.active');
-      if (!active || !els.periodChips.clientWidth) return;
-      const target = active.offsetLeft - ((els.periodChips.clientWidth - active.offsetWidth) / 2);
-      els.periodChips.scrollLeft = Math.max(0, target);
-    });
-  }
 }
 function renderAnalytics() {
   const weeklyBuckets = buildWeeklyBuckets();
@@ -2661,9 +1327,6 @@ function renderAnalytics() {
   }
 
   const chartRows = view === 'weekly' ? makeDayRows(selected) : makeMonthRows(selected);
-  currentAnalyticsRows = chartRows;
-  currentAnalyticsRowsView = view;
-  const hasChartData = chartRows.some(row => Number(row.totalMinutes) > 0);
   const maxTotal = Math.max(1, ...chartRows.map(d => d.totalMinutes));
   const tickStep = getNiceTickStep(maxTotal);
   const maxTick = Math.max(tickStep, Math.ceil(maxTotal / tickStep) * tickStep);
@@ -2671,80 +1334,39 @@ function renderAnalytics() {
   for (let t = maxTick; t >= 0; t -= tickStep) axisTicks.push(t);
 
   els.graphArea.innerHTML = `
-    <div class="analytics-chart analytics-chart--${view}">
-      <div class="chart-axis" aria-hidden="true">
-        ${axisTicks.map(min => `<div>${minutesToAxisLabel(min)}</div>`).join('')}
+    <div class="analytics-chart">
+      <div class="chart-axis">
+        ${axisTicks.map(min => `<div>${minutesToHuman(min)}</div>`).join('')}
       </div>
-      <div class="chart-body${view === 'monthly' ? ' monthly-chart-viewport' : ''}">
-        ${view === 'monthly' ? '<div class="monthly-chart-canvas">' : ''}
-        <div class="chart-grid" style="--chart-tick-count:${axisTicks.length}">
+      <div class="chart-body">
+        <div class="chart-grid">
           ${axisTicks.map(() => '<div class="grid-line"></div>').join('')}
         </div>
-        ${view === 'monthly' ? `
-          <div class="month-weekday-header" aria-hidden="true">
-            ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => `<span>${day}</span>`).join('')}
-          </div>
-          <div class="month-day-header" aria-hidden="true">
-            ${chartRows.map(row => `<span>${row.placeholder ? '' : row.short}</span>`).join('')}
-          </div>
-        ` : ''}
         <div class="chart-bars">
           ${chartRows.map((row, idx) => {
-            if (row.placeholder) {
-              return '<div class="day-col month-placeholder" aria-hidden="true"></div>';
-            }
             const total = row.totalMinutes;
             const heightPct = total ? clamp((total / maxTick) * 100, 2, 100) : 0;
-            const dailyGoal = Math.max(1, Number(state.focus) * Math.max(1, Number(state.roundsBeforeLong) || 1));
-            const intensityPct = clamp(Math.round((total / dailyGoal) * 100), 0, 100);
-            const activeSubjects = SUBJECTS.filter(s => row.bySubject[s] > 0);
-            const segments = activeSubjects.map((sub, segmentIndex) => {
+            const segments = SUBJECTS.filter(s => row.bySubject[s] > 0).map(sub => {
               const segPct = (row.bySubject[sub] / Math.max(total, 1)) * 100;
-              const cap = segmentIndex === 0 ? ' segment-top-cap' : '';
-              return `<div class="segment ${subjectColorClass(sub)}${cap}" style="height:${segPct}%" title="${sub}: ${row.bySubject[sub]}m"></div>`;
+              return `<div class="segment ${subjectColorClass(sub)}" style="height:${segPct}%" title="${sub}: ${row.bySubject[sub]}m"></div>`;
             }).join('');
-            const tooltipSubjects = SUBJECTS.filter(s => row.bySubject[s] > 0)
-              .map(sub => `${sub} ${minutesToHuman(row.bySubject[sub])}`)
-              .join(' · ');
             const active = currentAnalyticsDetail && currentAnalyticsDetail.index === idx && currentAnalyticsDetail.view === view ? 'selected' : '';
-            const today = row.key === dkey(new Date()) ? 'is-today' : '';
             return `
-              <div class="day-col ${active} ${today}" data-chart-index="${idx}" data-chart-view="${view}" role="button" tabindex="0" style="--intensity:${intensityPct}%" aria-label="${row.label}: ${minutesToHuman(total)}, ${row.questions} questions">
+              <div class="day-col ${active}" data-chart-index="${idx}" data-chart-view="${view}" role="button" tabindex="0" aria-label="${row.label}: ${minutesToHuman(total)}, ${row.questions} questions">
                 <div class="bar-wrap">
-                  <div class="bar ${active} ${total ? '' : 'empty'}" style="height:${heightPct}%;--bar-height:${heightPct}%" title="${row.label} - ${minutesToHuman(total)} - ${row.questions}q">
+                  <div class="bar ${active} ${total ? '' : 'empty'}" style="height:${heightPct}%" title="${row.label} - ${minutesToHuman(total)} - ${row.questions}q">
                     <div class="bar-total">${total ? minutesToHuman(total) : '0m'}</div>
-                    ${segments || '<div class="segment segment-empty segment-top-cap" style="height:100%"></div>'}
+                    ${segments || '<div class="segment" style="height:100%;background:rgba(148,163,184,.16)"></div>'}
                   </div>
                 </div>
                 <div class="day-name">${row.short}</div>
                 <div class="day-qs">${row.questions} q</div>
-                <div class="chart-tooltip" role="tooltip">
-                  <strong>${escapeHtml(row.label)}</strong>
-                  <span>${minutesToHuman(total)} · ${row.questions} questions</span>
-                  ${tooltipSubjects ? `<small>${tooltipSubjects}</small>` : '<small>No subject time logged</small>'}
-                </div>
               </div>
             `;
           }).join('')}
         </div>
-        ${view === 'monthly' ? `
-          <div class="monthly-day-footer" aria-hidden="true">
-            ${chartRows.map(row => row.placeholder
-              ? '<span class="month-placeholder" aria-hidden="true"></span>'
-              : `<span><strong>${row.short}</strong><small>${minutesToHuman(row.totalMinutes)}</small></span>`
-            ).join('')}
-          </div>
-        ` : ''}
-        ${view === 'monthly' ? '</div>' : ''}
-        ${hasChartData ? '' : `
-          <div class="chart-empty-message" aria-live="polite">
-            <strong>Your focus history will appear here.</strong>
-            <span>Start a session or log one to build your pattern.</span>
-          </div>
-        `}
       </div>
     </div>
-    ${view === 'monthly' ? '<div class="monthly-scroll-hint" aria-hidden="true">Swipe horizontally to explore the month</div>' : ''}
   `;
 
   const selectedDetail = currentAnalyticsDetail && currentAnalyticsDetail.view === view
@@ -2755,7 +1377,6 @@ function renderAnalytics() {
         questions: currentAnalyticsDetail.questions,
         bySubject: currentAnalyticsDetail.bySubject,
         questionsBySubject: currentAnalyticsDetail.questionsBySubject,
-        sessions: currentAnalyticsDetail.sessions,
         range: currentAnalyticsDetail.range
       }
     : {
@@ -2764,7 +1385,7 @@ function renderAnalytics() {
         totalMinutes: chartRows.reduce((a, r) => a + r.totalMinutes, 0),
         questions: chartRows.reduce((a, r) => a + r.questions, 0),
         bySubject: SUBJECTS.reduce((acc, s) => {
-          acc[s] = chartRows.reduce((a, r) => a + (r.bySubject?.[s] || 0), 0);
+          acc[s] = chartRows.reduce((a, r) => a + (r.bySubject[s] || 0), 0);
           return acc;
         }, {}),
         questionsBySubject: SUBJECTS.reduce((acc, s) => {
@@ -2775,7 +1396,19 @@ function renderAnalytics() {
 
   renderAnalyticsDetail(selectedDetail, view);
 
+  els.graphArea.querySelectorAll('.day-col[data-chart-index]').forEach(node => {
+    const selectBar = () => setAnalyticsDetailFromClick(view, Number(node.dataset.chartIndex));
+    node.addEventListener('click', selectBar);
+    node.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        selectBar();
+      }
+    });
+  });
+
   updateStats();
+  renderAchievements();
 }
 function handleTitleTap() {
   state.titleTapCount = (state.titleTapCount || 0) + 1;
@@ -2785,721 +1418,48 @@ function handleTitleTap() {
     state.titleTapCount = 0;
     showToast('Made with ❤️ by Sukirat');
     els.appTitle.textContent = 'Made with ❤️ by Sukirat';
-    setTimeout(() => { els.appTitle.textContent = 'Study Grove'; }, 2800);
+    setTimeout(() => { els.appTitle.textContent = 'JEE Pomodoro Flow'; }, 2800);
     saveState();
   }
 }
-
-const ACHIEVEMENT_DEFS = [
-  {
-    id: 'firstSpark',
-    name: 'First Spark',
-    rarity: 'common',
-    rarityLabel: 'COMMON',
-    icon: '✨',
-    desc: 'Log your first study session.',
-    target: 1,
-    metric: (m) => m.totalSessions,
-    label: (current, target) => `${current} / ${target} session`
-  },
-  {
-    id: 'momentum',
-    name: 'Momentum',
-    rarity: 'rare',
-    rarityLabel: 'RARE',
-    icon: '⚡',
-    desc: 'Log 5 study sessions.',
-    target: 5,
-    metric: (m) => m.totalSessions,
-    label: (current, target) => `${current} / ${target} sessions`
-  },
-  {
-    id: 'triadSync',
-    name: 'Triad Sync',
-    rarity: 'epic',
-    rarityLabel: 'EPIC',
-    icon: '🎯',
-    desc: 'Study with all three subjects in the same week.',
-    target: 3,
-    metric: (m) => m.subjectsTouched,
-    label: (current, target) => `${current} / ${target} subjects`
-  },
-  {
-    id: 'focusForge',
-    name: 'Focus Forge',
-    rarity: 'epic',
-    rarityLabel: 'EPIC',
-    icon: '⏳',
-    desc: 'Reach 10 total study hours.',
-    target: 600,
-    metric: (m) => m.totalMinutes,
-    label: (current, target) => `${minutesToHuman(current)} / ${minutesToHuman(target)}`
-  },
-  {
-    id: 'streakFlame',
-    name: 'Streak Flame',
-    rarity: 'legendary',
-    rarityLabel: 'LEGENDARY',
-    icon: '🔥',
-    desc: 'Build a 3-day streak.',
-    target: 3,
-    metric: (m) => m.streak,
-    label: (current, target) => `${current} / ${target} days`
-  },
-  {
-    id: 'noBreakBeast',
-    name: 'No-Break Beast',
-    rarity: 'legendary',
-    rarityLabel: 'LEGENDARY',
-    icon: '🧠',
-    desc: 'Log one marathon focus block of 75 minutes.',
-    target: 75,
-    metric: (m) => m.longestSession,
-    label: (current, target) => `${minutesToHuman(current)} / ${minutesToHuman(target)}`
-  },
-  // ── Daily challenges (re-derived from today each call, re-lock at midnight) ──
-  {
-    id: 'ironFocus',
-    name: 'Iron Focus',
-    daily: true,
-    rarity: 'rare',
-    rarityLabel: 'RARE',
-    icon: '🛡️',
-    desc: 'Study 3 hours in a single day.',
-    target: 180,
-    metric: (m) => m.todayMinutes,
-    label: (current, target) => `${minutesToHuman(current)} / ${minutesToHuman(target)}`
-  },
-  {
-    id: 'unbrokenWill',
-    name: 'Unbroken Will',
-    daily: true,
-    rarity: 'epic',
-    rarityLabel: 'EPIC',
-    icon: '⚔️',
-    desc: 'Study 5 hours in a single day.',
-    target: 300,
-    metric: (m) => m.todayMinutes,
-    label: (current, target) => `${minutesToHuman(current)} / ${minutesToHuman(target)}`
-  },
-  {
-    id: 'ascendant',
-    name: 'Ascendant',
-    daily: true,
-    rarity: 'legendary',
-    rarityLabel: 'LEGENDARY',
-    icon: '🌟',
-    desc: 'Study 6 hours in a single day.',
-    target: 360,
-    metric: (m) => m.todayMinutes,
-    label: (current, target) => `${minutesToHuman(current)} / ${minutesToHuman(target)}`
-  },
-  {
-    id: 'sharpshooter',
-    name: 'Sharpshooter',
-    daily: true,
-    rarity: 'rare',
-    rarityLabel: 'RARE',
-    icon: '🎯',
-    desc: 'Solve 30 questions in a single day.',
-    target: 30,
-    metric: (m) => m.todayQuestions,
-    label: (current, target) => `${current} / ${target} questions`
-  },
-  {
-    id: 'quizConqueror',
-    name: 'Quiz Conqueror',
-    daily: true,
-    rarity: 'epic',
-    rarityLabel: 'EPIC',
-    icon: '💎',
-    desc: 'Solve 50 questions in a single day.',
-    target: 50,
-    metric: (m) => m.todayQuestions,
-    label: (current, target) => `${current} / ${target} questions`
-  },
-  {
-    id: 'jeeSlayer',
-    name: 'JEE Slayer',
-    daily: true,
-    rarity: 'legendary',
-    rarityLabel: 'LEGENDARY',
-    icon: '⚡',
-    desc: 'Solve 70 questions in a single day.',
-    target: 70,
-    metric: (m) => m.todayQuestions,
-    label: (current, target) => `${current} / ${target} questions`
-  },
-  {
-    id: 'enayat',
-    name: "Enayat's Challenge",
-    daily: true,
-    rarity: 'mythic',
-    rarityLabel: 'MYTHIC',
-    icon: '👑',
-    desc: 'Solve 100 questions in a single day.',
-    target: 100,
-    metric: (m) => m.todayQuestions,
-    label: (current, target) => `${current} / ${target} questions`
-  }
-];
-
-function getAchievementMetrics() {
-  const records = getRecords();
-  const today = dkey(new Date());
-  const todayRecords = records.filter(r => r.date === today);
-  const totalMinutes = records.reduce((a, r) => a + (Number(r.minutes) || 0), 0);
-  const subjectsTouched = SUBJECTS.filter(subject =>
-    records.some(r => r.subject === subject && (Number(r.minutes) || 0) > 0)
-  ).length;
-  const longestSession = records.reduce((max, r) => Math.max(max, Number(r.minutes) || 0), 0);
-  return {
-    records,
-    todayRecords,
-    todayMinutes: todayRecords.reduce((a, r) => a + (Number(r.minutes) || 0), 0),
-    todayQuestions: todayRecords.reduce((a, r) => a + (Number(r.questions) || 0), 0),
-    totalSessions: records.length,
-    totalMinutes,
-    subjectsTouched,
-    streak: computeCurrentStreak(records),
-    longestSession
-  };
-}
-
-function achievementProgress(def, metrics) {
-  const current = Math.max(0, Number(def.metric(metrics)) || 0);
-  const target = Math.max(1, Number(def.target) || 1);
-  const capped = Math.min(current, target);
-  return {
-    current,
-    target,
-    capped,
-    pct: Math.max(0, Math.min(100, Math.round((capped / target) * 100)))
-  };
-}
-
-function achievementDateFromRecords(def, metrics) {
-  const chronological = [...(metrics.records || [])].sort((a, b) => {
-    const dateOrder = String(a.date || '').localeCompare(String(b.date || ''));
-    return dateOrder || String(a.at || '').localeCompare(String(b.at || ''));
-  });
-  if (!chronological.length) return '';
-  if (def.daily) return dkey(new Date());
-  if (def.id === 'firstSpark' || def.id === 'momentum') {
-    return chronological[Math.max(0, Number(def.target) - 1)]?.date || '';
-  }
-  if (def.id === 'triadSync') {
-    const subjects = new Set();
-    for (const record of chronological) {
-      subjects.add(record.subject);
-      if (subjects.size >= Number(def.target)) return record.date;
-    }
-  }
-  if (def.id === 'focusForge') {
-    let total = 0;
-    for (const record of chronological) {
-      total += Number(record.minutes) || 0;
-      if (total >= Number(def.target)) return record.date;
-    }
-  }
-  if (def.id === 'noBreakBeast') {
-    return chronological.find(record => (Number(record.minutes) || 0) >= Number(def.target))?.date || '';
-  }
-  // A streak is a property of the latest run, so the latest record is the
-  // most useful fallback when older saves pre-date per-badge timestamps.
-  return chronological[chronological.length - 1]?.date || '';
-}
-
-function formatAchievementDate(dateKey) {
-  const date = parseDateKey(dateKey);
-  return Number.isNaN(date.getTime())
-    ? ''
-    : date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function getAchievementEarnedLabel(def, metrics) {
-  if (!state.achievements?.[def.id]) return '';
-  const stored = state.achievementDates?.[def.id];
-  const dateKey = isDateKey(stored) ? stored : achievementDateFromRecords(def, metrics);
-  const formatted = formatAchievementDate(dateKey);
-  return formatted ? `Earned ${formatted}` : 'Unlocked';
-}
-
-function sortAchievementDefs(defs, metrics) {
-  return [...defs].sort((a, b) => {
-    const aUnlocked = Boolean(state.achievements?.[a.id]);
-    const bUnlocked = Boolean(state.achievements?.[b.id]);
-    if (aUnlocked !== bUnlocked) return aUnlocked ? 1 : -1;
-    const aProgress = achievementProgress(a, metrics);
-    const bProgress = achievementProgress(b, metrics);
-    const aRatio = aProgress.capped / aProgress.target;
-    const bRatio = bProgress.capped / bProgress.target;
-    if (aRatio !== bRatio) return bRatio - aRatio;
-    const orderDiff = ACHIEVEMENT_DEFS.indexOf(a) - ACHIEVEMENT_DEFS.indexOf(b);
-    return orderDiff || a.name.localeCompare(b.name);
-  });
-}
-
-function buildBadgeCrest(def, unlocked = false, modifier = '', extraClass = '') {
-  const isPopupCrest = extraClass.split(/\s+/).includes('ach-popup-badge-crest');
-  const popupPieces = isPopupCrest
-    ? `
-      <span class="badge-crest-half badge-crest-half--left" aria-hidden="true">
-        <span class="badge-crest-ribbon"></span>
-        <span class="badge-crest-medal"><span class="badge-crest-emblem">${escapeHtml(def.icon)}</span></span>
-      </span>
-      <span class="badge-crest-half badge-crest-half--right" aria-hidden="true">
-        <span class="badge-crest-ribbon"></span>
-        <span class="badge-crest-medal"><span class="badge-crest-emblem">${escapeHtml(def.icon)}</span></span>
-      </span>
-    `
-    : '';
-  return `
-    <div class="${extraClass} badge-crest ${modifier} ${unlocked ? 'badge-crest--unlocked' : 'badge-crest--locked'}" data-rarity="${def.rarity}" aria-hidden="true">
-      ${isPopupCrest ? '' : '<span class="badge-crest-ribbon"></span>'}
-      ${popupPieces}
-      ${isPopupCrest ? '' : `<span class="badge-crest-medal"><span class="badge-crest-emblem">${escapeHtml(def.icon)}</span></span>`}
-    </div>
-  `;
-}
-
 function maybeUnlockHiddenEggs() {
-  if (state.page === 'other') {
-    revealAchievementsOnOpen();
-  } else {
-    updateAchievements({ announce: false });
-  }
-}
-
-function revealAchievementsOnOpen() {
-  return updateAchievements({ announce: true });
-}
-
-function updateAchievements({ announce = false, persist = true } = {}) {
-  const metrics = getAchievementMetrics();
-  const current = state.achievements || {};
-  const currentDates = state.achievementDates || {};
-  const next = { ...current };
-  const nextDates = { ...currentDates };
-  const newlyUnlocked = [];
   const today = dkey(new Date());
-  const dayRolled = state.achievementDay !== today;
-
-  ACHIEVEMENT_DEFS.forEach(def => {
-    const unlocked = Number(def.metric(metrics)) >= Number(def.target);
-    if (def.daily) {
-      // Daily achievements are derived from today's records. This also
-      // repairs old saved data that kept the badge unlocked forever.
-      next[def.id] = unlocked;
-      if (unlocked && (dayRolled || currentDates[def.id] !== today)) nextDates[def.id] = today;
-      if (unlocked && !current[def.id] && announce) newlyUnlocked.push(def);
-    } else if (unlocked && !current[def.id]) {
-      next[def.id] = true;
-      nextDates[def.id] = today;
-      if (announce) newlyUnlocked.push(def);
-    }
-  });
-
-  const changed = ACHIEVEMENT_DEFS.some(def => Boolean(current[def.id]) !== Boolean(next[def.id]))
-    || state.achievementDay !== today
-    || ACHIEVEMENT_DEFS.some(def => currentDates[def.id] !== nextDates[def.id]);
-  state.achievements = next;
-  state.achievementDates = nextDates;
-  state.achievementDay = today;
-
-  if (changed && persist) saveState({ immediate: true, reason: 'achievements-updated' });
-
-  if (newlyUnlocked.length) {
-    achievementFlashIds = new Set(newlyUnlocked.map(def => def.id));
-    const primary = newlyUnlocked[0];
-    const label = newlyUnlocked.length === 1
-      ? `${primary.icon} ${primary.name} unlocked!`
-      : `${newlyUnlocked.length} achievements unlocked!`;
-    // The toast is a secondary nudge; the popup is the star.
-    showToast(label, 3600, { achievement: true });
-    // Daily unlocks take priority — they're time-sensitive. If any newly
-    // unlocked def is daily, celebrate that first; otherwise the first perm.
-    const primaryDef = newlyUnlocked.find(def => def.daily) || primary;
-    const remaining = newlyUnlocked.filter(def => def !== primaryDef);
-    showAchievementPopup(primaryDef, remaining);
-
-    clearTimeout(updateAchievements._t);
-    updateAchievements._t = setTimeout(() => {
-      achievementFlashIds = new Set();
-      if (state.page === 'other') renderAchievements();
-    }, isDesktopViewport() ? 2400 : 1200);
-  }
-
-  return { changed, newlyUnlocked };
-}
-
-function setupAchievementsWorkspace() {
-  const page = els.achievementsPage;
-  const gridCard = page?.querySelector('.achievements-grid-card');
-  if (!page || !gridCard || page.dataset.workspaceReady) return;
-  const tabs = document.createElement('div');
-  tabs.className = 'achievement-tabs';
-  tabs.setAttribute('role', 'tablist');
-  tabs.setAttribute('aria-label', 'Achievement categories');
-  tabs.innerHTML = `
-    <button class="achievement-tab active" type="button" role="tab" aria-selected="true" data-achievement-view="daily">Daily</button>
-    <button class="achievement-tab" type="button" role="tab" aria-selected="false" data-achievement-view="permanent">Milestones</button>
-    <button class="achievement-tab" type="button" role="tab" aria-selected="false" data-achievement-view="guide">Guide</button>
-  `;
-  const hero = page.querySelector('.badges-next-hero');
-  (hero || gridCard).before(tabs);
-  tabs.querySelectorAll('[data-achievement-view]').forEach(btn => {
-    btn.addEventListener('click', () => setAchievementView(btn.dataset.achievementView));
-  });
-  page.dataset.workspaceReady = 'true';
-}
-function renderAchievementView() {
-  const view = ['daily', 'permanent', 'guide'].includes(state.achievementView) ? state.achievementView : 'daily';
-  const gridCard = els.achievementsPage?.querySelector('.achievements-grid-card');
-  const guideCard = els.achievementsPage?.querySelector('.achievements-info-card');
-  const nextHero = els.nextBadgeHero;
-  if (gridCard) {
-    const active = view !== 'guide';
-    gridCard.classList.toggle('active', active);
-    gridCard.classList.toggle('hidden', !active);
-    gridCard.setAttribute('aria-hidden', String(!active));
-  }
-  if (guideCard) {
-    const active = view === 'guide';
-    guideCard.classList.toggle('active', active);
-    guideCard.classList.toggle('hidden', !active);
-    guideCard.setAttribute('aria-hidden', String(!active));
-  }
-  if (nextHero) {
-    const active = view !== 'guide' && nextHero.dataset.hasNext === 'true';
-    nextHero.hidden = !active;
-    nextHero.setAttribute('aria-hidden', String(!active));
-  }
-  document.querySelectorAll('.achievement-tab[data-achievement-view]').forEach(btn => {
-    const active = btn.dataset.achievementView === view;
-    btn.classList.toggle('active', active);
-    btn.setAttribute('aria-selected', String(active));
-  });
-}
-function setAchievementView(view) {
-  state.achievementView = ['daily', 'permanent', 'guide'].includes(view) ? view : 'daily';
-  renderAchievementView();
-  renderAchievements();
-  saveState();
-}
-
-function renderBadgeHero(metrics) {
-  const hero = els.nextBadgeHero;
-  if (!hero) return;
-  const locked = ACHIEVEMENT_DEFS
-    .filter(def => !state.achievements?.[def.id])
-    .sort((a, b) => {
-      const aProgress = achievementProgress(a, metrics);
-      const bProgress = achievementProgress(b, metrics);
-      const ratioDiff = (bProgress.capped / bProgress.target) - (aProgress.capped / aProgress.target);
-      const orderDiff = ACHIEVEMENT_DEFS.indexOf(a) - ACHIEVEMENT_DEFS.indexOf(b);
-      return ratioDiff || orderDiff || a.target - b.target || a.name.localeCompare(b.name);
-    });
-  const def = locked[0];
-  if (!def || state.achievementView === 'guide') {
-    hero.dataset.hasNext = 'false';
-    hero.hidden = true;
-    return;
-  }
-  const progress = achievementProgress(def, metrics);
-  hero.dataset.hasNext = 'true';
-  hero.className = `card badges-next-hero rarity-${def.rarity}`;
-  hero.hidden = false;
-  if (els.nextBadgeHeroArt) els.nextBadgeHeroArt.innerHTML = buildBadgeCrest(def, false, 'badge-crest--hero');
-  if (els.nextBadgeKind) els.nextBadgeKind.textContent = def.daily ? 'Daily challenge' : 'Permanent milestone';
-  if (els.nextBadgeName) els.nextBadgeName.textContent = def.name;
-  if (els.nextBadgeDescription) els.nextBadgeDescription.textContent = def.desc;
-  if (els.nextBadgeProgressLabel) els.nextBadgeProgressLabel.textContent = def.label(progress.capped, progress.target);
-  if (els.nextBadgeProgressHint) els.nextBadgeProgressHint.textContent = `${Math.max(0, progress.target - progress.capped)} to go`;
-  if (els.nextBadgeProgressFill) els.nextBadgeProgressFill.style.width = `${progress.pct}%`;
-  if (els.nextBadgeRarity) els.nextBadgeRarity.textContent = `Projected reward · ${def.rarityLabel}`;
-  if (els.nextBadgeReward) els.nextBadgeReward.textContent = 'Earned automatically';
-  if (els.nextBadgeLine) {
-    els.nextBadgeLine.textContent = progress.capped
-      ? 'You are already on the way — one more focused push keeps this crest within reach.'
-      : 'Start one focused session and give this crest a little momentum.';
+  const todayQuestions = getRecords().filter(r => r.date === today).reduce((a, r) => a + (Number(r.questions) || 0), 0);
+  if (todayQuestions >= 100) {
+    els.achEnayat.textContent = "Enayat's Challenge";
+    els.achEnayat.classList.add('unlocked');
   }
 }
-
-function buildAchievementCard(def, metrics, kind) {
-  const progress = achievementProgress(def, metrics);
-  const unlocked = Boolean(state.achievements?.[def.id]);
-  const rareClass = `rarity-${def.rarity}`;
-  const flashClass = achievementFlashIds.has(def.id) ? 'ach-just-unlocked' : '';
-  const progressLabel = unlocked ? 'Unlocked' : def.label(progress.capped, progress.target);
-  const earnedLabel = unlocked ? getAchievementEarnedLabel(def, metrics) : 'Locked until you reach this goal';
-  return `
-    <div class="ach-item ach-item--${kind} ${rareClass} ${unlocked ? 'ach-unlocked' : 'ach-locked'} ${flashClass}" data-achievement-id="${def.id}" data-rarity="${def.rarity}" data-progress="${progress.pct}">
-      ${buildBadgeCrest(def, unlocked, '', 'ach-icon')}
-      <div class="ach-body">
-        <div class="ach-topline">
-          <div class="ach-copy">
-            <div class="ach-name">${escapeHtml(def.name)}</div>
-            <div class="ach-desc">${escapeHtml(def.desc)}</div>
-          </div>
-          <div class="ach-rarity">${def.rarityLabel}</div>
-        </div>
-        <div class="ach-earned-date">${escapeHtml(earnedLabel)}</div>
-        <div class="ach-progress-wrap">
-          <div class="ach-progress-bar">
-            <div class="ach-progress-fill" style="width:${progress.pct}%"></div>
-          </div>
-          <div class="ach-progress-label">${escapeHtml(progressLabel)}</div>
-        </div>
-      </div>
-      <div class="ach-badge ${unlocked ? 'ach-badge--unlocked' : 'ach-badge--locked'}" aria-label="${unlocked ? 'Unlocked' : 'Locked'}">
-        <span class="ach-badge-icon" aria-hidden="true">${unlocked ? '✓' : '•'}</span>
-        <span class="ach-badge-label">${unlocked ? 'Unlocked' : 'Locked'}</span>
-      </div>
-    </div>
-  `;
-}
-
 function renderAchievements() {
-  const metrics = getAchievementMetrics();
-  renderBadgeHero(metrics);
-  const list = els.achievementsList || els.achAchievementsList;
-  const unlockedCount = ACHIEVEMENT_DEFS.reduce((count, def) => count + (state.achievements?.[def.id] ? 1 : 0), 0);
-
-  if (els.achUnlockedCount) {
-    els.achUnlockedCount.textContent = String(unlockedCount);
-  }
-  if (els.achTotalCount) {
-    els.achTotalCount.textContent = String(ACHIEVEMENT_DEFS.length);
-  }
-  if (!list) return;
-
-  // Each category gets a dedicated view so the badge hub stays short on phones.
-  const dailyDefs = ACHIEVEMENT_DEFS.filter(def => def.daily);
-  const permanentDefs = ACHIEVEMENT_DEFS.filter(def => !def.daily);
-
-  const dailyUnlocked = dailyDefs.reduce((n, def) => n + (state.achievements?.[def.id] ? 1 : 0), 0);
-  const permUnlocked = permanentDefs.reduce((n, def) => n + (state.achievements?.[def.id] ? 1 : 0), 0);
-
-  const showingDaily = state.achievementView !== 'permanent';
-  const defs = sortAchievementDefs(showingDaily ? dailyDefs : permanentDefs, metrics);
-  const kind = showingDaily ? 'daily' : 'permanent';
-  const label = showingDaily ? 'Daily Challenges' : 'Permanent Milestones';
-  const summary = showingDaily
-    ? `Resets at midnight · ${dailyUnlocked}/${dailyDefs.length} unlocked · closest first`
-    : `Unlocked forever · ${permUnlocked}/${permanentDefs.length} unlocked · closest first`;
-  list.innerHTML = `
-    <section class="ach-group ach-group--${kind}" aria-label="${label}">
-      <div class="section-heading ach-group-heading ach-group-heading--${kind}">
-        <h2>${label}</h2>
-        <span>${summary}</span>
-      </div>
-      <div class="ach-list ach-list--${kind}">
-        ${defs.map(def => buildAchievementCard(def, metrics, kind)).join('')}
-      </div>
-    </section>
-  `;
-  renderAchievementView();
+  els.achMadeBy.textContent = 'Made by Sukirat';
+  els.achJee.textContent = 'JEE mode: on';
+  els.achMadeBy.classList.add('unlocked');
+  els.achJee.classList.add('unlocked');
+  const todayQuestions = getRecords().filter(r => r.date === dkey(new Date())).reduce((a, r) => a + (Number(r.questions) || 0), 0);
+  const unlocked = todayQuestions >= 100;
+  els.achEnayat.textContent = unlocked ? "Enayat's Challenge" : "Enayat's Challenge (100 q/day)";
+  els.achEnayat.classList.toggle('unlocked', unlocked);
+  els.achEnayat.classList.toggle('locked', !unlocked);
 }
-
-// Full-screen celebration shown when an achievement unlocks from a logged
-// session. `extra` is an optional list of additional unlocks shown as "+N more".
-function showAchievementPopup(def, extra = []) {
-  if (!def || !els.achPopupOverlay) return;
-  const card = els.achPopupOverlay.querySelector('.ach-popup');
-  const knownRarities = ['common', 'rare', 'epic', 'legendary', 'mythic'];
-  // Paint the card with the rarity's color palette so the glow matches.
-  if (card) {
-    card.classList.remove(...knownRarities.map(r => `rarity-${r}`));
-    card.classList.add(`rarity-${def.rarity}`);
-  }
-  if (els.achPopupIcon) {
-    if (isDesktopViewport()) {
-      // Reuse the exact crest markup from the badge vault so the celebration
-      // feels like the badge itself is coming alive, rather than showing a
-      // separate emoji treatment.
-      els.achPopupIcon.innerHTML = buildBadgeCrest(def, true, 'badge-crest--popup', 'ach-popup-badge-crest');
-    } else {
-      // Preserve the existing compact mobile celebration exactly.
-      els.achPopupIcon.textContent = def.icon;
-    }
-  }
-  if (els.achPopupName) els.achPopupName.textContent = def.name;
-  if (els.achPopupRarity) els.achPopupRarity.textContent = def.rarityLabel;
-  if (els.achPopupDesc) els.achPopupDesc.textContent = def.desc;
-  if (els.achPopupMore) {
-    if (extra.length) {
-      els.achPopupMore.textContent = `+${extra.length} more ${extra.length === 1 ? 'unlock' : 'unlocks'}`;
-      els.achPopupMore.classList.remove('hidden');
-    } else {
-      els.achPopupMore.classList.add('hidden');
-    }
-  }
-
-  // Restart the entrance animation by toggling the play class.
-  if (card) {
-    card.classList.remove('ach-popup--play');
-    void card.offsetWidth; // force reflow so the animation replays
-    card.classList.add('ach-popup--play');
-  }
-
-  els.achPopupOverlay.classList.remove('hidden');
-  setScrollLock(true);
-  playSound('achievement', { rarity: def.rarity });
-
-  clearTimeout(showAchievementPopup._t);
-  showAchievementPopup._t = setTimeout(hideAchievementPopup, isDesktopViewport() ? 6400 : 3500);
-}
-
-function hideAchievementPopup() {
-  if (!els.achPopupOverlay) return;
-  setScrollLock(false);
-  els.achPopupOverlay.classList.add('hidden');
-  clearTimeout(showAchievementPopup._t);
-}
-
 function renderLeaderboard() {
   if (!els.leaderboardList) return;
-
-  const scope = ['daily', 'weekly', 'alltime'].includes(state.leaderboardScope)
-    ? state.leaderboardScope
-    : 'daily';
-  const todayKey = dkey(new Date());
-  const thisWeekKey = dkey(startOfWeek(new Date()));
-
-  // Reflect the active toggle on the scope bar.
-  document.querySelectorAll('[data-lb-scope]').forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.lbScope === scope);
-    btn.setAttribute('aria-selected', String(btn.dataset.lbScope === scope));
-  });
-
-  // Project each raw row onto the active scope. Daily/weekly rows only count
-  // when their period key matches today / this week — that's what makes the
-  // boards roll over at midnight and on Monday without any scheduled reset.
-  const myNameKey = (normalizeProfile(state.profile || loadProfile()).name || '')
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, ' ');
-  const projected = (Array.isArray(leaderboardRows) ? leaderboardRows : [])
-    .map((row) => {
-      let minutes = 0;
-      let questions = 0;
-      let inPeriod = true;
-      if (scope === 'daily') {
-        minutes = Number(row.dailyMinutes) || 0;
-        questions = Number(row.dailyQuestions) || 0;
-        inPeriod = String(row.dailyKey || '') === todayKey && (minutes > 0 || questions > 0);
-      } else if (scope === 'weekly') {
-        minutes = Number(row.weeklyMinutes) || 0;
-        questions = Number(row.weeklyQuestions) || 0;
-        inPeriod = String(row.weekKey || '') === thisWeekKey && (minutes > 0 || questions > 0);
-      } else {
-        minutes = Number(row.totalMinutes) || 0;
-        questions = Number(row.totalQuestions) || 0;
-        inPeriod = minutes > 0 || questions > 0;
-      }
-      const nameKey = (String(row.name || 'Student').trim() || 'Student').toLowerCase().replace(/\s+/g, ' ');
-      return {
-        name: String(row.name || 'Student').trim() || 'Student',
-        minutes: Math.max(0, Math.round(minutes)),
-        questions: Math.max(0, Math.round(questions)),
-        updatedAt: Number(row.updatedAt || 0) || 0,
-        inPeriod,
-        isYou: Boolean(myNameKey) && nameKey === myNameKey
-      };
-    })
-    .filter((row) => row.inPeriod);
-
-  projected.sort((a, b) => {
-    if (b.minutes !== a.minutes) return b.minutes - a.minutes;
-    if (b.questions !== a.questions) return b.questions - a.questions;
-    return b.updatedAt - a.updatedAt;
-  });
-
-  const rows = projected;
-  const topRows = rows.slice(0, 3);
-
-  // Scope-aware subline + reset hint, shown on the scope bar card.
-  if (els.leaderboardSubline) {
-    if (scope === 'daily') {
-      els.leaderboardSubline.textContent = `Today · resets at midnight`;
-    } else if (scope === 'weekly') {
-      els.leaderboardSubline.textContent = `This week (Mon–Sun) · resets Monday`;
-    } else {
-      els.leaderboardSubline.textContent = `All-time totals`;
-    }
-  }
-
-  if (els.leaderboardCount) {
-    els.leaderboardCount.textContent = `${rows.length} player${rows.length === 1 ? '' : 's'}`;
-  }
-  if (els.leaderboardUpdatedAt) {
-    els.leaderboardUpdatedAt.textContent = rows.length
-      ? `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-      : 'Live';
-  }
-
-  const emptyMessages = {
-    daily: 'No focus logged today yet — be the first 🔥',
-    weekly: 'No focus logged this week yet — get ahead early 🚀',
-    alltime: 'No leaderboard data yet — study hard!'
-  };
-  const emptyMsg = emptyMessages[scope];
-
-  if (els.leaderboardPodium) {
-    if (!topRows.length) {
-      els.leaderboardPodium.innerHTML = `<div class="podium-empty">${emptyMsg}</div>`;
-    } else {
-      const placeLabels = ['1st', '2nd', '3rd'];
-      const medals = ['🥇', '🥈', '🥉'];
-      els.leaderboardPodium.innerHTML = topRows.map((row, index) => {
-        const name = escapeHtml(row.name);
-        const youTag = row.isYou ? ' <span class="you-pill">You</span>' : '';
-        const hours = minutesToHuman(row.minutes);
-        const questions = row.questions;
-        const position = index + 1;
-        return `
-          <div class="podium-card place-${position}${row.isYou ? ' is-you' : ''}">
-            <div class="podium-rank">${medals[index]} ${placeLabels[index]}</div>
-            <div class="podium-name">${name}${youTag}</div>
-            <div class="podium-meta">${hours} · ${questions} q</div>
-          </div>
-        `;
-      }).join('');
-    }
-  }
-
-  if (!rows.length) {
-    els.leaderboardList.innerHTML = `<div class="mini-line leaderboard-empty-row"><span>${emptyMsg}</span><strong>0m</strong></div>`;
+  if (!leaderboardRows.length) {
+    els.leaderboardList.innerHTML = '<div class="mini-line"><span>No leaderboard data yet</span><strong>0h</strong></div>';
+    if (els.leaderboardUpdatedAt) els.leaderboardUpdatedAt.textContent = 'Live';
     return;
   }
-
-  els.leaderboardList.innerHTML = rows.map((row, index) => {
-    const name = escapeHtml(row.name);
-    const youTag = row.isYou ? ' <span class="you-pill">You</span>' : '';
-    const hours = minutesToHuman(row.minutes);
-    const questions = row.questions;
-    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-    const rankLabel = medal ? `${medal} ${index + 1}` : `${index + 1}`;
-    const rowClass = index < 3 ? ` rank-${index + 1}` : '';
-    const youClass = row.isYou ? ' is-you' : '';
-    return `<div class="mini-line leaderboard-row${rowClass}${youClass}"><span>${rankLabel}. ${name}${youTag}</span><strong>${hours} · ${questions} q</strong></div>`;
+  els.leaderboardList.innerHTML = leaderboardRows.map((row, index) => {
+    const name = escapeHtml(String(row.name || 'Student').trim() || 'Student');
+    const hours = minutesToHuman(Math.round(Number(row.totalMinutes) || 0));
+    const questions = Number(row.totalQuestions) || 0;
+    return `<div class="mini-line"><span>${index + 1}. ${name}</span><strong>${hours} · ${questions} q</strong></div>`;
   }).join('');
-}
-function updateProfileLabels() {
-  const name = state.profile?.name || 'Guest';
-  if (els.profileName) els.profileName.textContent = name;
-  if (els.profilePageName) els.profilePageName.textContent = name;
-  if (els.brandGreeting) {
-    const hour = new Date().getHours();
-    const greeting = hour < 5 ? 'Late-night study' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : hour < 22 ? 'Good evening' : 'Good night';
-    els.brandGreeting.textContent = `${greeting}, ${name}`;
+  if (els.leaderboardUpdatedAt) {
+    els.leaderboardUpdatedAt.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   }
 }
 function openProfileModal() {
-
   if (!els.profileModal) return;
-  setScrollLock(true);
   els.profileModal.classList.remove('hidden');
   els.profileModal.setAttribute('aria-hidden', 'false');
   els.profileInput.value = (state.profile && state.profile.name) || '';
@@ -3507,37 +1467,23 @@ function openProfileModal() {
 }
 function closeProfileModal(force = false) {
   if (!els.profileModal) return;
-  if (!force) {
-    const profile = normalizeProfile(state.profile || loadProfile());
-    if (!profile.name) {
-      showToast('Enter your name to continue');
-      setTimeout(() => els.profileInput.focus(), 50);
-      return;
-    }
+  const profile = normalizeProfile(state.profile || loadProfile());
+  if (!force && !profile.name) {
+    showToast('Enter your name to continue');
+    setTimeout(() => els.profileInput.focus(), 50);
+    return;
   }
   els.profileModal.classList.add('hidden');
   els.profileModal.setAttribute('aria-hidden', 'true');
-  setScrollLock(false);
 }
 function ensureProfile() {
   const profile = normalizeProfile(state.profile || loadProfile());
   state.profile = profile;
-  updateProfileLabels();
+  if (els.profileName) els.profileName.textContent = profile.name || 'Guest';
   if (!profile.name) {
-    // Show the modal after a short delay even if cloud check hasn't completed,
-    // so the user is never stuck waiting indefinitely (e.g. offline).
-    const cloudCheck = hydrateProfileFromCloud().then((hydrated) => {
+    void hydrateProfileFromCloud().then((hydrated) => {
       if (normalizedProfileHasName(hydrated)) return;
-    });
-    // If cloud hasn't resolved in 3s, show the modal anyway.
-    const fallbackTimer = setTimeout(() => {
-      const p = normalizeProfile(state.profile || loadProfile());
-      if (!p.name) openProfileModal();
-    }, 3000);
-    cloudCheck.finally(() => {
-      clearTimeout(fallbackTimer);
-      const p = normalizeProfile(state.profile || loadProfile());
-      if (!p.name) openProfileModal();
+      openProfileModal();
     });
   }
   return profile;
@@ -3555,15 +1501,20 @@ async function saveProfileFromInput() {
       showToast('Enter a name to continue');
       return;
     }
-    const ok = saveProfile({ name, createdAt: state.profile?.createdAt || Date.now(), updatedAt: Date.now() });
+
+    const { merged, mergedCount } = await claimCloudIdentity(name);
+    const ok = saveProfile(
+      { name, createdAt: state.profile?.createdAt || Date.now(), updatedAt: Date.now() },
+      { skipCloudSync: true }
+    );
     if (!ok) return;
-    updateProfileLabels();
+
+    if (els.profileName) els.profileName.textContent = name;
     closeProfileModal(true);
     render({ skipSave: true });
 
-    const { merged, mergedCount } = await claimCloudIdentity(name);
     saveState({ immediate: true, reason: merged ? 'progress-restored' : 'profile-claimed' });
-    render();
+    render({ skipSave: true });
 
     const mod = await ensureCloudSync();
     if (mod && typeof mod.pushDeviceProfile === 'function') {
@@ -3594,80 +1545,13 @@ function exportBackup() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `study-grove-backup-${dkey(new Date())}.json`;
+  a.download = `jee-flow-backup-${dkey(new Date())}.json`;
   a.click();
   URL.revokeObjectURL(url);
-}
-function importBackup() {
-  // Reset so picking the same file twice still fires `change`.
-  if (!els.importFileInput) {
-    showToast('Import not available');
-    return;
-  }
-  try { els.importFileInput.value = ''; } catch {}
-  els.importFileInput.click();
-}
-function handleImportFileChange(event) {
-  const input = event && event.target;
-  const file = input && input.files && input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    let parsed;
-    try {
-      parsed = JSON.parse(String(reader.result || ''));
-    } catch (error) {
-      logCloud('error', 'Backup import failed to parse.', error);
-      showToast('Could not read backup file');
-      return;
-    }
-    // Accept either the documented { state, records } export shape or a bare
-    // array of records (useful when a user hand-edits a file).
-    const backupState = parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed.state : null;
-    const incomingRecords = Array.isArray(parsed)
-      ? parsed
-      : (parsed && Array.isArray(parsed.records) ? parsed.records : null);
-    if (!incomingRecords) {
-      showToast('No records found in file');
-      return;
-    }
-    const previousRecords = getRecords();
-    const previousTombstones = normalizeDeletedRecordIds(state.deletedRecordIds);
-    const remoteTombstones = (backupState && backupState.deletedRecordIds) || {};
-    // Tombstones only ever grow — union them before merging records so a
-    // deletion known to either side always wins (same policy as cloud sync).
-    const mergedTombstones = mergeTombstones(previousTombstones, remoteTombstones);
-    const mergedRecords = mergeRecordsUnion(previousRecords, incomingRecords, mergedTombstones);
-    const addedCount = Math.max(0, mergedRecords.length - previousRecords.length);
-    if (!incomingRecords.length || (addedCount === 0 && Object.keys(mergedTombstones).length === Object.keys(previousTombstones).length)) {
-      showToast('Already up to date');
-      return;
-    }
-    if (!confirm(`Import ${addedCount} session(s) and merge with your current data?`)) return;
-    state.records = mergedRecords;
-    state.deletedRecordIds = mergedTombstones;
-    state.recordsUpdatedAt = nextRecordsUpdatedAt();
-    if (!saveState({ immediate: true, reason: 'backup-imported' })) {
-      // saveState already surfaced the storage-full toast; roll back the
-      // in-memory mutation so nothing is half-applied.
-      state.records = previousRecords;
-      state.deletedRecordIds = previousTombstones;
-      return;
-    }
-    render({ skipSave: true });
-    void refreshLeaderboard({ force: true });
-    showToast(addedCount > 0 ? `Imported ${addedCount} session(s)` : 'Backup merged');
-  };
-  reader.onerror = () => {
-    showToast('Could not read backup file');
-  };
-  reader.readAsText(file);
 }
 function clearLocalData() {
   if (!confirm('Clear all local study data on this device?')) return;
   state.records = [];
-  state.todos = [];
-  state.deletedRecordIds = {};
   state.streak = 0;
   state.lastDate = null;
   state.analyticsSelections = { weekly: -1, monthly: -1 };
@@ -3679,9 +1563,8 @@ function clearLocalData() {
   clearInterval(interval);
   interval = null;
   releaseWakeLock();
-  clearCloudQueue();
-  saveState({ immediate: true, reason: 'local-data-cleared', skipCloud: true });
-  render({ skipSave: true });
+  saveState({ immediate: true, reason: 'local-data-cleared' });
+  render();
   showToast('Local data cleared');
   void refreshLeaderboard({ force: true });
 }
@@ -3695,222 +1578,15 @@ function setAnalyticsView(view) {
   document.querySelectorAll('.tab[data-analytics-view]').forEach(btn => btn.classList.toggle('active', btn.dataset.analyticsView === state.analyticsView));
   renderAnalytics();
 }
-function setLeaderboardScope(scope) {
-  state.leaderboardScope = ['daily', 'weekly', 'alltime'].includes(scope) ? scope : 'daily';
-  saveState();
-  renderLeaderboard();
-  // Pull fresh rows so the newly-selected scope reflects the latest cloud data.
-  void refreshLeaderboard({ force: true });
-}
 function sanitizeNumbers() {
-  state.focus = Math.max(1, Math.min(60, Number.isFinite(Number(state.focus)) ? Number(state.focus) : 25));
-  state.shortBreak = Math.max(1, Math.min(30, Number.isFinite(Number(state.shortBreak)) ? Number(state.shortBreak) : 5));
-  state.longBreak = Math.max(1, Math.min(45, Number.isFinite(Number(state.longBreak)) ? Number(state.longBreak) : 15));
-  state.roundsBeforeLong = Math.max(2, Math.min(8, Number.isFinite(Number(state.roundsBeforeLong)) ? Number(state.roundsBeforeLong) : 4));
-  state.noBreakMode = Boolean(state.noBreakMode);
-}
-function updateSettingsRangeValue(input, output, suffix) {
-  if (!input) return;
-  const min = Number(input.min) || 0;
-  const max = Number(input.max) || 100;
-  const value = Math.min(max, Math.max(min, Number(input.value) || min));
-  const percent = max > min ? ((value - min) / (max - min)) * 100 : 0;
-  input.style.setProperty('--range-fill', `${percent}%`);
-  if (output) output.textContent = `${value} ${suffix}`;
-}
-function renderSettingsSoundVolume() {
-  const input = els.settingsVolumeInput;
-  if (!input) return;
-  const numericValue = Number(input.value);
-  const value = Math.round(Number.isFinite(numericValue)
-    ? clamp(numericValue, 0, 100)
-    : state.soundVolume * 100);
-  input.value = String(value);
-  input.style.setProperty('--range-fill', `${value}%`);
-  if (els.settingsVolumeValue) els.settingsVolumeValue.textContent = `${value}%`;
-  const disabled = !state.sound;
-  input.disabled = disabled;
-  if (els.soundVolumeField) {
-    els.soundVolumeField.classList.toggle('is-disabled', disabled);
-    els.soundVolumeField.setAttribute('aria-disabled', String(disabled));
-  }
-}
-function renderSettingsRangeValues() {
-  updateSettingsRangeValue(els.settingsFocusInput, els.settingsFocusValue, 'min');
-  updateSettingsRangeValue(els.settingsShortBreakInput, els.settingsShortBreakValue, 'min');
-  updateSettingsRangeValue(els.settingsLongBreakInput, els.settingsLongBreakValue, 'min');
-  updateSettingsRangeValue(els.settingsRoundsInput, els.settingsRoundsValue, 'rounds');
-}
-function setupSettingsWorkspace() {
-  const card = els.settingsPage?.querySelector('.settings-card');
-  if (!card || card.dataset.workspaceReady) return;
-  const headings = Array.from(card.children).filter(el => el.classList.contains('section-heading'));
-  const grids = {
-    timer: card.querySelector('.settings-grid'),
-    flow: card.querySelector('.settings-toggles'),
-    appearance: card.querySelector('.theme-grid')
-  };
-  const actions = card.querySelector('.settings-actions');
-  if (headings.length < 3 || !grids.timer || !grids.flow || !grids.appearance) return;
-
-  card.querySelectorAll('.page-divider').forEach(divider => divider.remove());
-  const tabs = document.createElement('div');
-  tabs.className = 'settings-tabs';
-  tabs.setAttribute('role', 'tablist');
-  tabs.setAttribute('aria-label', 'Settings categories');
-  tabs.innerHTML = `
-    <button class="settings-tab active" type="button" role="tab" aria-selected="true" data-settings-view="timer">Timer</button>
-    <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-view="flow">Flow</button>
-    <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-view="appearance">Style</button>
-  `;
-  const panes = {};
-  ['timer', 'flow', 'appearance'].forEach(view => {
-    const pane = document.createElement('div');
-    pane.className = `settings-pane${view === 'timer' ? ' active' : ''}`;
-    pane.dataset.settingsPane = view;
-    panes[view] = pane;
-    card.appendChild(pane);
-  });
-  panes.timer.append(headings[0], grids.timer);
-  panes.flow.append(headings[1], grids.flow);
-  panes.appearance.append(headings[2], grids.appearance);
-  if (actions) panes.appearance.appendChild(actions);
-  card.prepend(tabs);
-  tabs.querySelectorAll('[data-settings-view]').forEach(btn => {
-    btn.addEventListener('click', () => setSettingsView(btn.dataset.settingsView));
-  });
-  card.dataset.workspaceReady = 'true';
-}
-function renderSettingsView() {
-  // Keep the settings workspace tabbed on mobile as well. Aurora changes the
-  // material and spacing, but it should not remove the Timer / Flow / Style
-  // submenus that make the long settings page usable.
-  const integrated = false;
-  const view = ['timer', 'flow', 'appearance'].includes(state.settingsView) ? state.settingsView : 'timer';
-  document.body.classList.toggle('aurora-settings-integrated', integrated);
-  document.querySelectorAll('[data-settings-pane]').forEach(pane => {
-    const active = integrated || pane.dataset.settingsPane === view;
-    pane.classList.toggle('active', active);
-    pane.classList.toggle('hidden', !active);
-    pane.setAttribute('aria-hidden', String(!active));
-  });
-  document.querySelectorAll('.settings-tab[data-settings-view]').forEach(btn => {
-    const active = !integrated && btn.dataset.settingsView === view;
-    btn.classList.toggle('active', active);
-    btn.setAttribute('aria-selected', String(active));
-    btn.setAttribute('aria-hidden', String(integrated));
-  });
-}
-function setSettingsView(view) {
-  state.settingsView = ['timer', 'flow', 'appearance'].includes(view) ? view : 'timer';
-  renderSettingsView();
-  saveState();
-}
-function renderSettings() {
-  if (!els.settingsPage) return;
-  if (els.settingsFocusInput) els.settingsFocusInput.value = String(state.focus);
-  if (els.settingsShortBreakInput) els.settingsShortBreakInput.value = String(state.shortBreak);
-  if (els.settingsLongBreakInput) els.settingsLongBreakInput.value = String(state.longBreak);
-  if (els.settingsRoundsInput) els.settingsRoundsInput.value = String(state.roundsBeforeLong);
-  if (els.settingsVolumeInput) els.settingsVolumeInput.value = String(Math.round(state.soundVolume * 100));
-  renderSettingsRangeValues();
-  const settingsSummaryValues = els.settingsPage.querySelectorAll('.settings-summary .mini-stat strong');
-  const settingsSummaryLabels = els.settingsPage.querySelectorAll('.settings-summary .mini-stat span');
-  if (settingsSummaryLabels[0]) settingsSummaryLabels[0].textContent = 'Focus duration';
-  if (settingsSummaryValues[0]) settingsSummaryValues[0].textContent = `${state.focus} min`;
-  if (settingsSummaryValues[1]) settingsSummaryValues[1].textContent = state.noBreakMode ? 'No-break' : 'Pomodoro';
-  if (els.settingsNoBreakInput) els.settingsNoBreakInput.checked = Boolean(state.noBreakMode);
-  if (els.settingsAutoStartInput) els.settingsAutoStartInput.checked = Boolean(state.autoStart);
-  if (els.settingsSoundInput) els.settingsSoundInput.checked = Boolean(state.sound);
-  renderSettingsSoundVolume();
-  if (els.settingsPulseInput) els.settingsPulseInput.checked = Boolean(state.pulse);
-  document.querySelectorAll('.theme-card[data-theme]').forEach(card => {
-    card.classList.toggle('active', card.dataset.theme === (state.theme || 'nebula'));
-    card.setAttribute('aria-pressed', String(card.dataset.theme === (state.theme || 'nebula')));
-  });
-  renderSettingsView();
-}
-function applySettingsFromUI() {
-  if (!els.settingsPage) return;
-  const parsedFocus = Number.parseInt(els.settingsFocusInput?.value, 10);
-  const parsedShort = Number.parseInt(els.settingsShortBreakInput?.value, 10);
-  const parsedLong = Number.parseInt(els.settingsLongBreakInput?.value, 10);
-  const parsedRounds = Number.parseInt(els.settingsRoundsInput?.value, 10);
-  const parsedSoundVolume = Number(els.settingsVolumeInput?.value);
-  const next = {
-    focus: Number.isFinite(parsedFocus) && parsedFocus >= 1 && parsedFocus <= 60 ? parsedFocus : state.focus,
-    shortBreak: Number.isFinite(parsedShort) && parsedShort >= 1 && parsedShort <= 30 ? parsedShort : state.shortBreak,
-    longBreak: Number.isFinite(parsedLong) && parsedLong >= 1 && parsedLong <= 45 ? parsedLong : state.longBreak,
-    roundsBeforeLong: Number.isFinite(parsedRounds) && parsedRounds >= 2 && parsedRounds <= 8 ? parsedRounds : state.roundsBeforeLong,
-    noBreakMode: Boolean(els.settingsNoBreakInput?.checked),
-    autoStart: Boolean(els.settingsAutoStartInput?.checked),
-    sound: Boolean(els.settingsSoundInput?.checked),
-    soundVolume: Number.isFinite(parsedSoundVolume) ? clamp(parsedSoundVolume / 100, 0, 1) : state.soundVolume,
-    pulse: Boolean(els.settingsPulseInput?.checked)
-  };
-  const wasRunning = state.running;
-  state.focus = next.focus;
-  state.shortBreak = next.shortBreak;
-  state.longBreak = next.longBreak;
-  state.roundsBeforeLong = next.roundsBeforeLong;
-  state.noBreakMode = next.noBreakMode;
-  state.autoStart = next.autoStart;
-  state.sound = next.sound;
-  state.soundVolume = next.soundVolume;
-  state.pulse = next.pulse;
-  if (!wasRunning && !state.pendingSession) {
-    state.total = secondsForMode(state.currentMode);
-    state.remaining = state.total;
-  }
-  saveState({ immediate: true, reason: 'settings-updated' });
-  render({ skipSave: true });
-}
-function applySoundVolumeFromUI(immediate = false) {
-  if (!els.settingsVolumeInput) return;
-  state.soundVolume = clamp(Number(els.settingsVolumeInput.value) / 100, 0, 1);
-  renderSettingsSoundVolume();
-  saveState({
-    immediate,
-    skipCloud: !immediate,
-    reason: 'sound-volume-updated'
-  });
-}
-function resetSettingsToDefaults() {
-  state.focus = 25;
-  state.shortBreak = 5;
-  state.longBreak = 15;
-  state.roundsBeforeLong = 4;
-  state.noBreakMode = false;
-  state.autoStart = false;
-  state.sound = true;
-  state.soundVolume = 0.7;
-  state.pulse = true;
-  if (!state.running && !state.pendingSession) {
-    state.currentMode = 'focus';
-    state.total = secondsForMode('focus');
-    state.remaining = state.total;
-  }
-  saveState({ immediate: true, reason: 'settings-reset' });
-  render({ skipSave: true });
-  showToast('Settings reset');
-}
-
-function dismissStartupSplash() {
-  const splash = els.startupSplash;
-  if (!splash || splash.dataset.dismissed === '1') return;
-  splash.dataset.dismissed = '1';
-  const minimumDisplay = isDesktopViewport() ? DESKTOP_SPLASH_MIN_MS : MOBILE_SPLASH_MIN_MS;
-  const remaining = Math.max(0, minimumDisplay - (performance.now() - startupSplashStartedAt));
-  window.setTimeout(() => {
-    splash.classList.add('is-hidden');
-    splash.setAttribute('aria-hidden', 'true');
-    window.setTimeout(() => splash.remove(), 520);
-  }, remaining);
+  state.focus = Math.max(10, Math.min(90, Number(state.focus) || 25));
+  state.shortBreak = Math.max(3, Math.min(30, Number(state.shortBreak) || 5));
+  state.longBreak = Math.max(5, Math.min(45, Number(state.longBreak) || 15));
+  state.roundsBeforeLong = Math.max(2, Math.min(8, Number(state.roundsBeforeLong) || 4));
 }
 
 cloudClientId = getCloudClientId();
 cloudQueue = loadCloudQueue();
-void refreshCloudGeneration({ force: true });
 
 function init() {
   state = normalizeState(state);
@@ -3922,43 +1598,30 @@ function init() {
   sanitizeNumbers();
   if (!state.total) state.total = secondsForMode(state.currentMode);
   if (!state.remaining) state.remaining = state.total;
-  if (!['timer', 'analytics', 'leaderboard', 'other'].includes(state.page)) state.page = 'timer';
+  if (state.page !== 'analytics') state.page = 'timer';
   if (state.pendingSession) state.running = false;
   state.remaining = clamp(Number(state.remaining) || state.total, 0, state.total || secondsForMode(state.currentMode));
   state.total = Math.max(1, Number(state.total) || secondsForMode(state.currentMode));
 
   els.timerPage.classList.toggle('active', state.page === 'timer');
-  if (els.analyticsPage) els.analyticsPage.classList.toggle('active', state.page === 'analytics');
-  if (els.leaderboardPage) els.leaderboardPage.classList.toggle('active', state.page === 'leaderboard');
-  if (els.otherPage) els.otherPage.classList.toggle('active', state.page === 'other');
-  updatePageNavigation();
-  renderOtherView();
+  document.querySelectorAll('.drawer-item[data-page]').forEach(btn => btn.classList.toggle('active', btn.dataset.page === state.page));
+  els.analyticsPage.classList.toggle('active', state.page === 'analytics');
   document.querySelectorAll('.tab[data-analytics-view]').forEach(btn => btn.classList.toggle('active', btn.dataset.analyticsView === (state.analyticsView || 'weekly')));
 
   currentSubject = safeSubject(state.lastSubject);
   currentAnalyticsDetail = null;
   closeSessionModal();
-  applyTheme(state.theme);
-  // Restore the desktop focus-queue minimise state before the first render so
-  // the layout lands in the right shape immediately (no flash of the expanded
-  // panel before it collapses, or vice versa).
-  document.body.classList.toggle('todo-collapsed', Boolean(state.todoCollapsed));
-  if (els.todoCollapseBtn) els.todoCollapseBtn.setAttribute('aria-expanded', String(!state.todoCollapsed));
-  if (els.todoRestoreChip) els.todoRestoreChip.setAttribute('aria-expanded', String(Boolean(state.todoCollapsed)));
-  updateProfileLabels();
+  if (els.profileName) els.profileName.textContent = state.profile.name || 'Guest';
   ensureProfile();
+  render({ skipSave: true });
 
-  // Restore timer checkpoint BEFORE the first render() call.
-  // Previously render() ran first, painting the stale pre-reload remaining
-  // value, and the corrected time only appeared up to a second later when
-  // the next tick fired — which read as "the timer reset" on a cold start.
-  // restoreTimerFromCheckpoint() also sets up the tick interval, so no
-  // further interval management is needed here.
   if (state.running) {
-    restoreTimerFromCheckpoint();
+    if (!restoreTimerFromCheckpoint()) {
+      timerPerfStamp = performance.now();
+      clearInterval(interval);
+      interval = setInterval(tick, 1000);
+    }
   }
-
-  render();
 
   maybeUnlockHiddenEggs();
   renderLeaderboard();
@@ -3983,19 +1646,19 @@ function init() {
 
   window.addEventListener('beforeunload', () => {
     saveTimerCheckpoint();
-    saveState({ immediate: true, reason: 'beforeunload' });
+    saveState({ skipCloudSync: true, touchUpdatedAt: false, reason: 'beforeunload' });
   });
 
   window.addEventListener('pagehide', () => {
     saveTimerCheckpoint();
-    saveState({ immediate: true, reason: 'pagehide' });
+    saveState({ skipCloudSync: true, touchUpdatedAt: false, reason: 'pagehide' });
     releaseWakeLock();
   });
 
   window.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       saveTimerCheckpoint();
-      saveState({ immediate: true, reason: 'hidden' });
+      saveState({ skipCloudSync: true, touchUpdatedAt: false, reason: 'hidden' });
       return;
     }
     if (document.visibilityState === 'visible' && state.running) {
@@ -4034,31 +1697,8 @@ function init() {
   });
 }
 
-document.querySelectorAll('.tab-pill-item[data-page]').forEach(btn => {
-  btn.addEventListener('click', () => setPage(btn.dataset.page));
-});
-document.querySelectorAll('[data-open-page]').forEach(btn => {
-  btn.addEventListener('click', () => setPage(btn.dataset.openPage));
-});
-document.querySelectorAll('.other-tab[data-other-view]').forEach(btn => {
-  btn.addEventListener('click', () => setOtherView(btn.dataset.otherView));
-});
-
-// Give ordinary buttons a quiet, theme-aware confirmation. Buttons with a
-// richer dedicated cue keep that cue instead of stacking two sounds.
-document.addEventListener('click', (event) => {
-  const button = event.target instanceof Element ? event.target.closest('button') : null;
-  if (!button || button.disabled || button.getAttribute('aria-disabled') === 'true') return;
-  if (button.id === 'startPauseBtn' || button.id === 'saveLogBtn' || button.classList.contains('theme-card')) return;
-  playSound('button');
-});
-
-if (els.changeProfileBtn) els.changeProfileBtn.addEventListener('click', openProfileModal);
-if (els.profileName) {
-  els.profileName.style.cursor = 'pointer';
-  els.profileName.title = 'Tap to change your name';
-  els.profileName.addEventListener('click', openProfileModal);
-}
+els.menuBtn.addEventListener('click', openDrawer);
+els.aboutBtn.addEventListener('click', openDrawer);
 if (els.profileSaveBtn) els.profileSaveBtn.addEventListener('click', saveProfileFromInput);
 if (els.profileInput) {
   els.profileInput.addEventListener('keydown', (e) => {
@@ -4071,9 +1711,10 @@ if (els.profileModal) {
     if (e.target === els.profileModal) closeProfileModal();
   });
 }
+els.closeDrawerBtn.addEventListener('click', closeDrawer);
+els.drawerBackdrop.addEventListener('click', closeDrawer);
+els.drawer.querySelectorAll('.drawer-item[data-page]').forEach(btn => btn.addEventListener('click', () => setPage(btn.dataset.page)));
 els.backupBtn.addEventListener('click', exportBackup);
-if (els.importBtn) els.importBtn.addEventListener('click', importBackup);
-if (els.importFileInput) els.importFileInput.addEventListener('change', handleImportFileChange);
 els.clearDataBtn.addEventListener('click', clearLocalData);
 
 els.appTitle.addEventListener('click', handleTitleTap);
@@ -4090,25 +1731,24 @@ els.startPauseBtn.addEventListener('click', () => {
 els.skipBtn.addEventListener('click', () => {
   if (state.running) pauseTimer();
   if (state.pendingSession) {
-    restorePendingSessionState();
+    advanceCycleAfterFocus(state.pendingSession.roundCompleted || state.cycleCount);
+    state.pendingSession = null;
+    closeSessionModal();
+    state.currentMode = 'focus';
+    state.remaining = state.focus * 60;
+    state.total = state.remaining;
+    timerPerfStamp = 0;
+    state.timerCheckpoint = null;
     render();
     return;
   }
   if (state.currentMode === 'focus') {
     const completedRound = state.cycleCount;
-    if (state.noBreakMode) {
-      // Skipping a phase changes the screen, but it does not complete a focus
-      // cycle. In no-break mode cycleCount feeds getContinuousSessionMinutes,
-      // so incrementing it here would let repeated skips inflate logged time.
-      state.currentMode = 'focus';
-      state.remaining = secondsForMode('focus');
-      state.total = state.remaining;
-    } else {
-      const nextMode = nextBreakModeForRound(completedRound);
-      state.currentMode = nextMode;
-      state.remaining = secondsForMode(state.currentMode);
-      state.total = state.remaining;
-    }
+    const nextMode = nextBreakModeForRound(completedRound);
+    state.currentMode = nextMode;
+    state.remaining = secondsForMode(state.currentMode);
+    state.total = state.remaining;
+    advanceCycleAfterFocus(completedRound);
   } else {
     state.currentMode = 'focus';
     state.remaining = secondsForMode('focus');
@@ -4129,61 +1769,33 @@ els.resetBtn.addEventListener('click', () => {
   closeSessionModal();
   render();
 });
+function getLoggableFocusMinutes() {
+  if (state.pendingSession) return state.pendingSession.minutes;
+  if (state.currentMode !== 'focus') return 0;
+  const totalSeconds = Math.max(1, Number(state.total) || secondsForMode('focus'));
+  const remainingSeconds = Math.max(0, Number(state.remaining) || 0);
+  if (remainingSeconds >= totalSeconds) return 0;
+  return Math.max(1, Math.round((totalSeconds - remainingSeconds) / 60));
+}
+
 els.logBtn.addEventListener('click', () => {
   if (state.pendingSession) {
     openSessionModal();
     return;
   }
-  if (state.currentMode !== 'focus') {
-    showToast('Finish your break first, then log the focus session');
+  const elapsedFocusMinutes = getLoggableFocusMinutes();
+  if (!elapsedFocusMinutes) {
+    showToast('Start a focus session before logging');
     return;
   }
-
-  const elapsedFocusMinutes = getCurrentFocusProgressMinutes();
-  if (elapsedFocusMinutes <= 0) {
-    showToast('Start the focus timer before logging a session');
-    return;
-  }
-
   const completedRound = state.cycleCount;
-  if (state.noBreakMode) {
-    // Use the full continuous-session total (all completed cycles plus the
-    // current cycle's progress), not just the current cycle's elapsed time.
-    // getCurrentFocusProgressMinutes() only measures state.total - remaining,
-    // so any fully-completed prior cycles in this no-break run were being
-    // silently dropped from the logged session.
-    const continuousMinutes = getContinuousSessionMinutes();
-    if (state.running) pauseTimer();
-    const restoreState = createTimerSnapshot();
-    state.pendingSession = createPendingSession({
-      minutes: continuousMinutes,
-      nextMode: 'focus',
-      sessionDate: dkey(new Date()),
-      roundCompleted: Math.max(1, Number(state.cycleCount) || 1),
-      wasNoBreak: true,
-      restoreState
-    });
-    openSessionModal();
-    render();
-    return;
-  }
-
   if (state.running) pauseTimer();
-  const nextMode = nextBreakModeForRound(completedRound);
-  state.pendingSession = createPendingSession({
+  state.pendingSession = {
     minutes: elapsedFocusMinutes,
-    nextMode,
+    nextMode: nextBreakModeForRound(completedRound),
     sessionDate: dkey(new Date()),
-    roundCompleted: completedRound,
-    wasNoBreak: false,
-    restoreState: {
-      currentMode: nextMode,
-      remaining: secondsForMode(nextMode),
-      total: secondsForMode(nextMode),
-      cycleCount: completedRound,
-      running: false
-    }
-  });
+    roundCompleted: completedRound
+  };
   state.currentMode = state.pendingSession.nextMode;
   state.total = secondsForMode(state.currentMode);
   state.remaining = state.total;
@@ -4202,10 +1814,6 @@ if (els.analyticsSessionModal) {
     if (e.target === els.analyticsSessionModal) closeAnalyticsSessionModal();
   });
 }
-// Any tap on the celebration overlay (backdrop or card) dismisses it.
-if (els.achPopupOverlay) {
-  els.achPopupOverlay.addEventListener('click', hideAchievementPopup);
-}
 
 els.subjectChips.forEach(btn => btn.addEventListener('click', () => {
   els.subjectChips.forEach(x => {
@@ -4220,143 +1828,15 @@ els.subjectChips.forEach(btn => btn.addEventListener('click', () => {
 document.querySelectorAll('.tab[data-analytics-view]').forEach(btn => {
   btn.addEventListener('click', () => setAnalyticsView(btn.dataset.analyticsView));
 });
-document.querySelectorAll('[data-lb-scope]').forEach(btn => {
-  btn.addEventListener('click', () => setLeaderboardScope(btn.dataset.lbScope));
-});
-if (els.graphArea) {
-  els.graphArea.addEventListener('click', (event) => {
-    const node = event.target.closest('.day-col[data-chart-index]');
-    if (!node) return;
-    setAnalyticsDetailFromClick(node.dataset.chartView, Number(node.dataset.chartIndex));
-  });
-  els.graphArea.addEventListener('keydown', (event) => {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    const node = event.target.closest('.day-col[data-chart-index]');
-    if (!node) return;
-    event.preventDefault();
-    setAnalyticsDetailFromClick(node.dataset.chartView, Number(node.dataset.chartIndex));
-  });
-}
-if (els.settingsPage) {
-  [els.settingsFocusInput, els.settingsShortBreakInput, els.settingsLongBreakInput, els.settingsRoundsInput].forEach(input => {
-    if (!input) return;
-    input.addEventListener('input', renderSettingsRangeValues);
-    input.addEventListener('change', applySettingsFromUI);
-    input.addEventListener('blur', applySettingsFromUI);
-  });
-  [els.settingsNoBreakInput, els.settingsAutoStartInput, els.settingsSoundInput, els.settingsPulseInput].forEach(input => {
-    if (!input) return;
-    input.addEventListener('change', applySettingsFromUI);
-  });
-  if (els.settingsVolumeInput) {
-    els.settingsVolumeInput.addEventListener('input', () => applySoundVolumeFromUI(false));
-    els.settingsVolumeInput.addEventListener('change', () => applySoundVolumeFromUI(true));
-  }
-  if (els.settingsResetBtn) els.settingsResetBtn.addEventListener('click', resetSettingsToDefaults);
-}
-if (els.todoForm) {
-  els.todoForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    if (!addTodo(els.todoInput ? els.todoInput.value : '')) return;
-    if (els.todoInput) {
-      els.todoInput.value = '';
-      els.todoInput.focus();
-    }
-  });
-}
-document.querySelectorAll('[data-todo-filter]').forEach(button => {
-  button.addEventListener('click', () => {
-    todoFilter = ['open', 'all', 'done'].includes(button.dataset.todoFilter)
-      ? button.dataset.todoFilter
-      : 'open';
-    renderTodoList();
-  });
-});
-if (els.todoClearCompleted) els.todoClearCompleted.addEventListener('click', clearCompletedTodos);
-if (els.todoCollapseBtn) {
-  els.todoCollapseBtn.addEventListener('click', () => setTodoCollapsed(true));
-}
-if (els.todoRestoreChip) {
-  els.todoRestoreChip.addEventListener('click', () => setTodoCollapsed(false));
-}
 if (els.closeAnalyticsSessionBtn) els.closeAnalyticsSessionBtn.addEventListener('click', closeAnalyticsSessionModal);
 if (els.closeAnalyticsSessionFooterBtn) els.closeAnalyticsSessionFooterBtn.addEventListener('click', closeAnalyticsSessionModal);
 if (els.deleteAnalyticsSessionBtn) els.deleteAnalyticsSessionBtn.addEventListener('click', handleAnalyticsSessionDelete);
-if (els.periodPrevBtn) els.periodPrevBtn.addEventListener('click', () => shiftAnalyticsPeriod(-1));
-if (els.periodNextBtn) els.periodNextBtn.addEventListener('click', () => shiftAnalyticsPeriod(1));
-if (els.periodTodayBtn) els.periodTodayBtn.addEventListener('click', () => {
-  const view = state.analyticsView === 'monthly' ? 'monthly' : 'weekly';
-  const buckets = view === 'weekly' ? buildWeeklyBuckets() : buildMonthBuckets();
-  if (buckets.length) setAnalyticsPeriod(buckets.length - 1);
-});
-if (els.analyticsRecentSessionsBtn) els.analyticsRecentSessionsBtn.addEventListener('click', openRecentAnalyticsSessionModal);
-
-document.querySelectorAll('.theme-card[data-theme]').forEach(card => {
-  card.addEventListener('click', () => {
-    const t = card.dataset.theme;
-    if (t === state.theme) return;
-    applyTheme(t);
-    saveState({ immediate: true, reason: 'theme-changed' });
-    playSound('themeChange');
-    const names = { nebula: 'Grove', ocean: 'Lagoon', ember: 'Hearth', aurora: 'Bloom' };
-    showToast(`Theme: ${names[t] || t}`);
-  });
-});
-
-// Aurora is a mobile-only theme. When the viewport crosses the 900px breakpoint
-// (e.g. resizing a window or docking a tablet), re-evaluate the active theme so
-// the desktop fallback inside applyTheme kicks in instead of stranding the app
-// on an unstyled mobile-only surface. We only react to the actual crossover to
-// avoid touching the DOM on every resize tick.
-(() => {
-  const desktopMQ = window.matchMedia?.('(min-width: 901px)');
-  if (!desktopMQ) return;
-  let lastDesktop = desktopMQ.matches;
-  desktopMQ.addEventListener?.('change', (ev) => {
-    const nowDesktop = ev.matches;
-    if (nowDesktop === lastDesktop) return;
-    lastDesktop = nowDesktop;
-    applyTheme(state.theme);
-    renderSettingsView();
-  });
-})();
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
+    closeDrawer();
     if (!els.sessionModal.classList.contains('hidden')) dismissSessionModal();
     if (els.analyticsSessionModal && !els.analyticsSessionModal.classList.contains('hidden')) closeAnalyticsSessionModal();
-  }
-  if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
-  const target = e.target;
-  const isTyping = target instanceof HTMLElement && (
-    target.matches('input, textarea, select, [contenteditable="true"]')
-  );
-  if (isTyping || !els.sessionModal.classList.contains('hidden') ||
-      (els.analyticsSessionModal && !els.analyticsSessionModal.classList.contains('hidden')) ||
-      (els.profileModal && !els.profileModal.classList.contains('hidden'))) return;
-
-  if (e.code === 'Space') {
-    e.preventDefault();
-    if (state.page === 'timer' && !state.pendingSession) {
-      state.running ? pauseTimer() : startTimer();
-    }
-  } else if (e.key.toLowerCase() === 'r' && state.page === 'timer') {
-    e.preventDefault();
-    els.resetBtn.click();
-  } else if (e.key.toLowerCase() === 'l' && state.page === 'timer') {
-    e.preventDefault();
-    els.logBtn.click();
-  } else if (e.key.toLowerCase() === 's' && state.page === 'timer') {
-    e.preventDefault();
-    els.skipBtn.click();
-  } else if (e.key.toLowerCase() === 'q') {
-    // Toggle the focus queue between minimised and expanded. Works on any page
-    // on desktop; the collapse UI is hidden on phones, so the saved state only
-    // flips where the toggle is actually visible (≥760px).
-    if (window.matchMedia('(min-width: 760px)').matches) {
-      e.preventDefault();
-      setTodoCollapsed(!state.todoCollapsed);
-    }
   }
 });
 
@@ -4366,19 +1846,11 @@ function cleanupAndRefresh(options = {}) {
   updateStats();
   updateAchievements();
   if (state.page === 'analytics') renderAnalytics();
-  else if (state.page === 'other') {
-    renderSettings();
-    renderAchievements();
-  }
   else renderTimerOnly();
-  if (!options.skipSave) saveState();
+  if (!options.skipSave) saveState({ skipCloudSync: true, touchUpdatedAt: false, reason: 'cleanup-refresh' });
 }
-setupSettingsWorkspace();
-setupAchievementsWorkspace();
-setupDesktopParallax();
 init();
 cleanupAndRefresh({ skipSave: true });
-dismissStartupSplash();
 void reconcileCloudState({ reason: 'startup', force: navigator.onLine !== false }).then((changed) => {
   if (!changed) return;
   currentSubject = safeSubject(state.lastSubject);
@@ -4407,81 +1879,5 @@ function tick() {
 
   saveTimerCheckpoint();
   renderTimerOnly();
-  saveState();
-}
-
-/* ── Scroll-aware topbar ────────────────────────────────────
-   The topbar is position:fixed, so it stays pinned. The page owns the initial
-   header offset inside its scroll range; the bar fades only after that offset
-   has been naturally scrolled through, so it never leaves a dead band above
-   the content. Scrolling back to top restores it.
-
-   Covers laptop (wheel/keyboard scroll) AND mobile (touch scroll) by listening
-   to scroll + touchmove + resize. Uses rAF throttling and passive listeners. */
-function initScrollTopbar() {
-  const topbar = document.querySelector('.topbar');
-  if (!topbar || topbar.dataset.scrollBound === '1') return;
-  topbar.dataset.scrollBound = '1';
-
-  let ticking = false;
-  const syncTimerScrollRoom = (activeScroller) => {
-    const timerPage = document.querySelector('#timerPage');
-    const isDesktop = window.matchMedia?.('(min-width: 901px)').matches;
-    if (!timerPage || !isDesktop || activeScroller !== timerPage) {
-      timerPage?.style.removeProperty('--timer-scroll-tail');
-      return;
-    }
-
-    const styles = getComputedStyle(timerPage);
-    const currentTail = parseFloat(styles.paddingBottom) || 0;
-    const headerOffset = parseFloat(styles.paddingTop) || 0;
-    // Use the page's natural range first, excluding the tail we may have
-    // added on an earlier pass. Only add enough room to let the header offset
-    // be fully consumed, plus one pixel so the fade threshold is crossed.
-    const naturalRange = Math.max(0, timerPage.scrollHeight - timerPage.clientHeight - currentTail);
-    const requiredTail = Math.max(0, headerOffset + 1 - naturalRange);
-    const nextTail = `${Math.ceil(requiredTail)}px`;
-    if (styles.getPropertyValue('--timer-scroll-tail').trim() !== nextTail) {
-      timerPage.style.setProperty('--timer-scroll-tail', nextTail);
-    }
-  };
-  const update = () => {
-    ticking = false;
-    const activeScroller = document.querySelector('.content > .page.active');
-    const content = document.querySelector('.content');
-    const windowScroll = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
-    const panelScroll = activeScroller ? Number(activeScroller.scrollTop) || 0 : 0;
-    const contentOffset = content ? parseFloat(getComputedStyle(content).paddingTop) || 0 : 0;
-    const pageOffset = activeScroller ? parseFloat(getComputedStyle(activeScroller).paddingTop) || 0 : 0;
-    const threshold = Math.max(8, contentOffset + pageOffset);
-    const y = Math.max(windowScroll, panelScroll);
-    topbar.classList.toggle('scrolled', y > threshold);
-  };
-  const schedule = () => {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(update);
-  };
-
-  const refreshLayoutAndScroll = () => {
-    syncTimerScrollRoom(document.querySelector('.content > .page.active'));
-    update();
-  };
-
-  syncTopbarScroll = refreshLayoutAndScroll;
-  window.addEventListener('scroll', schedule, { passive: true });
-  document.querySelectorAll('.content > .page').forEach(page => {
-    page.addEventListener('scroll', schedule, { passive: true });
-  });
-  window.addEventListener('touchmove', schedule, { passive: true });
-  window.addEventListener('resize', refreshLayoutAndScroll, { passive: true });
-  // Re-check shortly after load in case late content shifts the scroll position.
-  setTimeout(refreshLayoutAndScroll, 300);
-  refreshLayoutAndScroll();
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initScrollTopbar);
-} else {
-  initScrollTopbar();
+  saveState({ skipCloudSync: true, touchUpdatedAt: false, reason: 'timer-tick' });
 }
